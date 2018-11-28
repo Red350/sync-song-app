@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         main_btn_viewlobbies.setOnClickListener { startActivity(Intent(this, LobbiesActivity::class.java)) }
         main_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
+        main_btn_spotify.setOnClickListener { startActivity(Intent(this, SpotifyActivity::class.java)) }
 
         main_btn_joinlobby.setOnClickListener{
             val queue = Volley.newRequestQueue(this)
@@ -36,6 +37,5 @@ class MainActivity : AppCompatActivity() {
             queue.add(joinRequest)
         }
     }
-
 
 }

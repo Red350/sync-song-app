@@ -38,4 +38,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/main_btn_joinlobby"/>
 
+    <Button
+        android:text="Spotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_btn_spotify"
+        android:layout_below="@+id/temp"/>
+
 </RelativeLayout>
