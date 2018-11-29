@@ -21,6 +21,7 @@
         <activity android:name=".LobbiesActivity" />
         <activity android:name=".CreateLobbyActivity" />
         <activity android:name=".SpotifyActivity"></activity>
+        <activity android:name=".SocketActivity"></activity>
     </application>
 
 </manifest>

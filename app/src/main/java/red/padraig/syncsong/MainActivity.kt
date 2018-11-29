@@ -18,10 +18,11 @@ class MainActivity : AppCompatActivity() {
         main_btn_viewlobbies.setOnClickListener { startActivity(Intent(this, LobbiesActivity::class.java)) }
         main_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
         main_btn_spotify.setOnClickListener { startActivity(Intent(this, SpotifyActivity::class.java)) }
+        main_btn_sockets.setOnClickListener { startActivity(Intent(this, SocketActivity::class.java)) }
 
         main_btn_joinlobby.setOnClickListener{
             val queue = Volley.newRequestQueue(this)
-            val url = "http://padraig.red:8080/lobbies/" + main_et_joinlobby.text + "/join"
+            val url = """${getString(R.string.api_url)}lobbies/${main_et_joinlobby.text}/join"""
 
             Log.d("DEBUG", "joining lobby: $url")
             val joinRequest = JsonObjectRequest(Request.Method.GET, url, null,

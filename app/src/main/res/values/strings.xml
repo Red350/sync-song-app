@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sync Song</string>
+    <string name="api_url">http://padraig.red:8080/</string>
 </resources>
