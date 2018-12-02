@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -20,6 +21,7 @@ class LobbyActivity : AppCompatActivity() {
         private const val REDIRECT_URI = "red.padraig.syncsong://callback"
     }
 
+    private lateinit var id: String
     private lateinit var socket: WebSocketClient
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private var playing = false
@@ -27,6 +29,8 @@ class LobbyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
+
+        id = intent.getStringExtra("LOBBY_ID")
 
         connectToServer()
 
@@ -72,19 +76,26 @@ class LobbyActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
-
     }
 
     private fun connectToServer() {
-        socket = object : WebSocketClient(URI("http://padraig.red:8080/ws")) {
+        socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$id/join")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
-                Log.d(this@LobbyActivity.tag(), "Opened")
+                Log.d(this@LobbyActivity.tag(), "Socket connection opened")
                 setConnectionState(true)
                 setStatus("Connected")
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                Log.d(this@LobbyActivity.tag(), "Closed")
+                Log.d(this@LobbyActivity.tag(), "Socket connection closed")
+                if (code == 1003) {
+                    Log.d(this@LobbyActivity.tag(), "Lobby does not exist")
+                    this@LobbyActivity.runOnUiThread {
+                        Toast.makeText(this@LobbyActivity, "Lobby does not exist", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                    }
+
+                }
                 setConnectionState(false)
                 setStatus("Closed")
             }
@@ -105,18 +116,20 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun togglePlay() {
         if (playing) {
-            socket.send("play")
+            socket.send("{command: pause}")
         } else {
-            socket.send("pause")
+            socket.send("{command: play}")
         }
     }
 
     private fun play() {
+        Log.d(this.tag(), "Playing")
         mSpotifyAppRemote?.playerApi?.play("spotify:track:5ZrrXIYTvjXPKVQMjqaumR")
         playing = true
     }
 
     private fun pause() {
+        Log.d(this.tag(), "Pausing")
         mSpotifyAppRemote?.playerApi?.pause()
         playing = false
     }
@@ -139,8 +152,8 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun parseMessage(msg: String) {
         when {
-            msg.contains("play") -> play()
-            msg.contains("pause") -> pause()
+            msg.contains("{command: play}") -> play()
+            msg.contains("{command: pause}") -> pause()
             else -> displayMessage(msg)
         }
     }

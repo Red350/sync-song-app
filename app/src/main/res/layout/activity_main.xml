@@ -5,51 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/main_btn_viewlobbies"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View lobbies" />
-
-    <Button
-        android:id="@+id/main_btn_createlobby"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/main_btn_viewlobbies"
-        android:text="Create lobby" />
-
     <EditText
-        android:id="@+id/main_et_joinlobby"
+        android:id="@+id/main_et_lobbyid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/main_btn_createlobby"
-        android:hint="Lobby ID"/>
+        android:hint="Lobby ID" />
 
     <Button
         android:id="@+id/main_btn_joinlobby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_et_joinlobby"
-        android:text="Join"/>
+        android:layout_toEndOf="@id/main_et_lobbyid"
+        android:text="Join" />
+
+    <Button
+        android:id="@+id/main_btn_createlobby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_et_lobbyid"
+        android:text="Create lobby" />
+
+    <Button
+        android:id="@+id/main_btn_viewlobbies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_btn_createlobby"
+        android:text="View lobbies" />
 
     <TextView
-        android:id="@+id/temp"
+        android:id="@+id/main_tv_lobbies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_btn_joinlobby"/>
-
-    <Button
-        android:text="Spotify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/main_btn_spotify"
-        android:layout_below="@+id/temp"/>
-
-    <Button
-        android:text="Sockets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/main_btn_sockets"
-        android:layout_below="@+id/main_btn_spotify"/>
+        android:layout_below="@id/main_btn_viewlobbies" />
 
 </RelativeLayout>

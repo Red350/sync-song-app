@@ -22,8 +22,8 @@
         android:id="@+id/lobby_btn_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lobby_tv_status"
-        android:text="Connect"
+        android:layout_toEndOf="@id/lobby_tv_status"
+        android:text="Reconnect"
         android:visibility="invisible" />
 
     <Button

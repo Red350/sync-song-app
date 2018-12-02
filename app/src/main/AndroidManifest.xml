@@ -21,18 +21,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LobbiesActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".CreateLobbyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SpotifyActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SocketActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".LobbyActivity"></activity>
+            android:name=".LobbyActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -3,11 +3,13 @@ package red.padraig.syncsong
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_create_lobby.*
+import red.padraig.syncsong.extensions.tag
 
 
 class CreateLobbyActivity : AppCompatActivity() {
@@ -20,11 +22,12 @@ class CreateLobbyActivity : AppCompatActivity() {
             val queue = Volley.newRequestQueue(this)
             val url = "http://padraig.red:8080/lobbies/create"
 
-            Log.d("DEBUG", "creating lobby: $url")
+            Log.d(this.tag(), "creating lobby: $url")
             val createRequest = object : StringRequest(Request.Method.POST, url,
                     Response.Listener { response ->
-                        Log.d("DEBUG", response.toString())
-                        temp_create.text = response
+                        Log.d(this.tag(), response.toString())
+                        Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
+                        onBackPressed()
                     },
                     Response.ErrorListener { error ->
                         println("Error creating lobby: $error")
