@@ -3,14 +3,12 @@ package red.padraig.syncsong
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
+import org.java_websocket.client.WebSocketClient
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var socket: WebSocketClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,23 +18,25 @@ class MainActivity : AppCompatActivity() {
         main_btn_spotify.setOnClickListener { startActivity(Intent(this, SpotifyActivity::class.java)) }
         main_btn_sockets.setOnClickListener { startActivity(Intent(this, SocketActivity::class.java)) }
 
-        main_btn_joinlobby.setOnClickListener{
-            val queue = Volley.newRequestQueue(this)
-            val url = """${getString(R.string.api_url)}lobbies/${main_et_joinlobby.text}/join"""
+        main_btn_joinlobby.setOnClickListener { startActivity(Intent(this, LobbyActivity::class.java)) }
 
-            Log.d("DEBUG", "joining lobby: $url")
-            val joinRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                    Response.Listener { response ->
-                        Log.d("DEBUG", response.toString())
-                        temp.text = response.toString()
-                    },
-                    Response.ErrorListener { error ->
-                        println("Error joining lobby: $error")
-                    }
-            )
-
-            queue.add(joinRequest)
-        }
+//        main_btn_joinlobby.setOnClickListener{
+//            val queue = Volley.newRequestQueue(this)
+//            val url = """${getString(R.string.api_url)}lobbies/${main_et_joinlobby.text}/join"""
+//
+//            Log.d("DEBUG", "joining lobby: $url")
+//            val joinRequest = JsonObjectRequest(Request.Method.GET, url, null,
+//                    Response.Listener { response ->
+//                        Log.d("DEBUG", response.toString())
+//                        temp.text = response.toString()
+//                    },
+//                    Response.ErrorListener { error ->
+//                        println("Error joining lobby: $error")
+//                    }
+//            )
+//
+//            queue.add(joinRequest)
+//        }
     }
 
 }

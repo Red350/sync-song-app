@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LobbyActivity">
+
+    <TextView
+        android:id="@+id/lobby_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lobby a" />
+
+    <TextView
+        android:id="@+id/lobby_tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/lobby_tv_title" />
+
+    <Button
+        android:id="@+id/lobby_btn_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lobby_tv_status"
+        android:text="Connect"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/lobby_btn_playpause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lobby_btn_connect"
+        android:enabled="false"
+        android:text="Play/Pause" />
+
+    <TextView
+        android:id="@+id/lobby_tv_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lobby_btn_connect"
+        android:layout_toEndOf="@id/lobby_btn_playpause"
+        android:text="Loading song..." />
+
+    <TextView
+        android:id="@+id/lobby_tv_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/lobby_et_message" />
+
+    <EditText
+        android:id="@+id/lobby_et_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/lobby_btn_send" />
+
+    <Button
+        android:id="@+id/lobby_btn_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:enabled="false"
+        android:text="Send" />
+
+</RelativeLayout>
