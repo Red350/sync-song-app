@@ -60,7 +60,7 @@ class SpotifyActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        // Aaand we will finish off here.
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
 
     }
 
