@@ -26,6 +26,8 @@ class LobbyActivity : AppCompatActivity() {
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private var playing = false
 
+    private var titleRegex = Regex("""\{name: (.*)\}\"\}""")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
@@ -145,6 +147,10 @@ class LobbyActivity : AppCompatActivity() {
         this.runOnUiThread { lobby_tv_status.text = " ($status)" }
     }
 
+    private fun setLobbyName(name: String?) {
+        Log.d(this.tag(), "Setting name to $name")
+        this.runOnUiThread { lobby_tv_title.text = name}
+    }
 
     private fun displayMessage(msg: String) {
         this.runOnUiThread { lobby_tv_messages.append(msg + "\n") }
@@ -154,6 +160,9 @@ class LobbyActivity : AppCompatActivity() {
         when {
             msg.contains("{command: play}") -> play()
             msg.contains("{command: pause}") -> pause()
+            titleRegex.containsMatchIn(msg) -> {
+                setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
+            }
             else -> displayMessage(msg)
         }
     }
