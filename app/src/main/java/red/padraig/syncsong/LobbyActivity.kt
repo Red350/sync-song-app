@@ -149,7 +149,7 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun setLobbyName(name: String?) {
         Log.d(this.tag(), "Setting name to $name")
-        this.runOnUiThread { lobby_tv_title.text = name}
+        this.runOnUiThread { lobby_tv_title.text = name }
     }
 
     private fun displayMessage(msg: String) {
