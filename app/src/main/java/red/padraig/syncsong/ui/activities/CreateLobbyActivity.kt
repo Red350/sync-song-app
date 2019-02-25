@@ -10,7 +10,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_create_lobby.*
 import red.padraig.syncsong.R
-import red.padraig.syncsong.extensions.tag
+import red.padraig.syncsong.tag
 
 
 class CreateLobbyActivity : AppCompatActivity() {

@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import red.padraig.syncsong.Lobby
 import red.padraig.syncsong.R
 
-class LobbyAdapter(context: Context, private val data: List<String>): BaseAdapter() {
+class LobbyAdapter(context: Context, private val data: List<Lobby>): BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -16,7 +17,7 @@ class LobbyAdapter(context: Context, private val data: List<String>): BaseAdapte
         var view = convertView
         if (view == null) view = inflater.inflate(R.layout.row_lobby, parent, false)
         val tv = view?.findViewById<TextView>(R.id.rowlobby_tv_temptext)
-        tv?.text = data[i]
+        tv?.text = data[i].name
         return view
     }
 

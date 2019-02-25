@@ -5,9 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.LobbyListActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/getlobbies"
+        android:text="Get lobbies"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lobbylist_lv_lobbies"/>
+        android:id="@+id/lobbylist_lv_lobbies"
+        android:layout_below="@id/getlobbies"/>
 
 </RelativeLayout>

@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_lobby.*
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
-import red.padraig.syncsong.extensions.tag
+import red.padraig.syncsong.tag
 import java.net.URI
 
 class LobbyActivity : AppCompatActivity() {
