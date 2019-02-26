@@ -24,6 +24,8 @@ class LobbyListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby_list)
 
+        lobbylist_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
+
         lobbyAdapter = LobbyAdapter(this, lobbyList)
         lobbylist_lv_lobbies.adapter = lobbyAdapter
         lobbylist_lv_lobbies.setOnItemClickListener { _, _, i, _ ->
