@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/rowlobby_tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/rowlobby_tv_temptext"/>
+        android:layout_marginEnd="20dp"
+        android:text="Lobby name" />
+
+    <TextView
+        android:id="@+id/rowlobby_tv_genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/rowlobby_tv_name"
+        android:text="Genre" />
+
+    <TextView
+        android:id="@+id/rowlobby_tv_nummembers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rowlobby_tv_name"
+        android:layout_marginEnd="20dp"
+        android:text="42" />
+
+    <TextView
+        android:id="@+id/rowlobby_tv_pubpriv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rowlobby_tv_name"
+        android:layout_toEndOf="@id/rowlobby_tv_nummembers"
+        android:text="Public" />
 </RelativeLayout>

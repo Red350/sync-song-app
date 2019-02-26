@@ -21,7 +21,7 @@ class CreateLobbyActivity : AppCompatActivity() {
 
         createlobby_btn_create.setOnClickListener {
             val queue = Volley.newRequestQueue(this)
-            val url = "http://padraig.red:8080/lobbies/create"
+            val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_createlobby)
 
             Log.d(this.tag(), "creating lobby: $url")
             val createRequest = object : StringRequest(Request.Method.POST, url,

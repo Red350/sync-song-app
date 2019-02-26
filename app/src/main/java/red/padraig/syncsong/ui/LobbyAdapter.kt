@@ -16,8 +16,10 @@ class LobbyAdapter(context: Context, private val data: List<Lobby>): BaseAdapter
     override fun getView(i: Int, convertView: View?, parent: ViewGroup?): View? {
         var view = convertView
         if (view == null) view = inflater.inflate(R.layout.row_lobby, parent, false)
-        val tv = view?.findViewById<TextView>(R.id.rowlobby_tv_temptext)
-        tv?.text = data[i].name
+        view?.findViewById<TextView>(R.id.rowlobby_tv_name)?.text = data[i].name
+        view?.findViewById<TextView>(R.id.rowlobby_tv_genre)?.text = data[i].genre
+        view?.findViewById<TextView>(R.id.rowlobby_tv_nummembers)?.text = data[i].numMembers.toString()
+        view?.findViewById<TextView>(R.id.rowlobby_tv_pubpriv)?.text = data[i].public.toString()
         return view
     }
 
