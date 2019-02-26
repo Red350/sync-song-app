@@ -5,31 +5,75 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.CreateLobbyActivity">
 
-    <EditText
-        android:id="@+id/createlobby_et_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="ID"
-        android:minWidth="50dp" />
-
-    <EditText
-        android:id="@+id/createlobby_et_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/createlobby_et_id"
-        android:hint="Name"
-        android:minWidth="50dp" />
-
-    <Button
-        android:id="@+id/createlobby_btn_create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/createlobby_et_name"
-        android:text="Create" />
-
     <TextView
-        android:id="@+id/temp_create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:id="@+id/createlobby_tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="Create a new lobby"
+        android:textSize="30sp" />
+
+    <LinearLayout
+        android:id="@+id/createlobby_ll_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/createlobby_tv_title"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/createlobby_et_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Lobby name"
+            android:minWidth="200dp" />
+
+        <Spinner
+            android:id="@+id/createlobby_spin_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:entries="@array/genres"
+            android:minWidth="200dp" />
+
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:minWidth="200dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/createlobby_rg_pub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:checked="true"
+                android:text="Public" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private" />
+
+        </RadioGroup>
+
+
+        <Button
+            android:id="@+id/createlobby_btn_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:minWidth="200dp"
+            android:text="Create" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

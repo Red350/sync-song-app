@@ -36,8 +36,9 @@ class CreateLobbyActivity : AppCompatActivity() {
             ) {
                 override fun getParams(): Map<String, String> {
                     val params = HashMap<String, String>()
-                    params["id"] = createlobby_et_id.text.toString()
                     params["name"] = createlobby_et_name.text.toString()
+                    params["genre"] = createlobby_spin_genre.selectedItem.toString()
+                    params["public"] = createlobby_rg_pub.isChecked.toString()
 
                     return params
                 }

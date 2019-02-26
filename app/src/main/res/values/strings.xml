@@ -4,4 +4,12 @@
     <string name="api_url_1">http://padraig.red</string>
     <string name="api_port">:8080</string>
     <string name="api_endpoint_lobbies">/lobbies</string>
+
+    <string-array name="genres">
+        <item>Bit of everything</item>
+        <item>Rock</item>
+        <item>Pop</item>
+        <item>Electronica</item>
+    </string-array>
+
 </resources>
