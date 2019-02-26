@@ -9,14 +9,14 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_prototype.*
 import red.padraig.syncsong.R
 
-class MainActivity : AppCompatActivity() {
+class PrototypeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_prototype)
 
         main_btn_joinlobby.setOnClickListener {
             val intent = Intent(this, LobbyActivity::class.java)
