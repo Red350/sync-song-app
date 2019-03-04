@@ -12,7 +12,9 @@ import kotlinx.android.synthetic.main.activity_lobby.*
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
+import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.tag
+import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 
 class LobbyActivity : AppCompatActivity() {
@@ -39,7 +41,7 @@ class LobbyActivity : AppCompatActivity() {
 
         lobby_btn_connect.setOnClickListener { connectToServer() }
         lobby_btn_send.setOnClickListener {
-            socket.send(lobby_et_message.text.toString())
+            sendMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
         }
         lobby_btn_playpause.setOnClickListener { togglePlay() }
@@ -164,7 +166,11 @@ class LobbyActivity : AppCompatActivity() {
             titleRegex.containsMatchIn(msg) -> {
                 setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
             }
-            else -> displayMessage(msg)
+            else -> displayMessage(msg.unescapeSpecialCharacters())
         }
+    }
+
+    private fun sendMessage(msg: String) {
+        socket.send(msg.escapeSpecialCharacters())
     }
 }
