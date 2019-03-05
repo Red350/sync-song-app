@@ -7,6 +7,9 @@
 
     <string name="api_endpoint_lobbies">/lobbies</string>
     <string name="api_endpoint_createlobby">/lobbies/create</string>
+    <string name="spotify_url_search">https://api.spotify.com/v1/search</string>
+    <string name="CLIENT_ID">8a5ddeeff2b14f95930f7c1b30d5a83b</string>
+    <string name="REDIRECT_URI">red.padraig.syncsong://callback</string>
 
     <string-array name="genres">
         <item>Bit of everything</item>

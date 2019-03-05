@@ -1,5 +1,6 @@
 package red.padraig.syncsong.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -18,11 +19,6 @@ import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 
 class LobbyActivity : AppCompatActivity() {
-
-    companion object {
-        private const val CLIENT_ID = "8a5ddeeff2b14f95930f7c1b30d5a83b"
-        private const val REDIRECT_URI = "red.padraig.syncsong://callback"
-    }
 
     private lateinit var id: String
     private lateinit var socket: WebSocketClient
@@ -45,13 +41,13 @@ class LobbyActivity : AppCompatActivity() {
             lobby_et_message.setText("")
         }
         lobby_btn_playpause.setOnClickListener { togglePlay() }
-
+        lobby_btn_search.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
     }
 
     override fun onStart() {
         super.onStart()
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI)
+        val connectionParams = ConnectionParams.Builder(getString(R.string.CLIENT_ID))
+                .setRedirectUri(getString(R.string.REDIRECT_URI))
                 .showAuthView(true)
                 .build()
 
