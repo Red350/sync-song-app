@@ -67,7 +67,7 @@ class LobbyListActivity : AppCompatActivity() {
                     lobbyAdapter.notifyDataSetChanged()
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(this, "Error getting lobbies: $error", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error getting lobbies: ${String(error.networkResponse.data)}", Toast.LENGTH_LONG).show()
                 }
         )
         queue.add(jsonObjectRequest)
