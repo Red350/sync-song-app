@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".ui.activities.BaseActivity"></activity>
         <activity
             android:name=".ui.activities.StartupActivity"
             android:screenOrientation="portrait">
@@ -38,9 +38,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.LobbyActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Spotify Activities -->
+            android:screenOrientation="portrait" /> <!-- Spotify Activities -->
         <!-- TODO this should have been automatically added but wasn't, not sure if it's required -->
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"

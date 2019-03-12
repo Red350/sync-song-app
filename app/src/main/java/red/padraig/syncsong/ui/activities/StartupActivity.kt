@@ -2,7 +2,6 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.android.volley.Request
@@ -14,23 +13,19 @@ import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import red.padraig.syncsong.R
-import red.padraig.syncsong.SharedPrefsWrapper
-import red.padraig.syncsong.SyncSongApplication
 import red.padraig.syncsong.tag
 
 
-class StartupActivity : AppCompatActivity() {
+class StartupActivity : BaseActivity() {
 
     companion object {
         const val REQUEST_CODE = 1337
     }
     private var token: String = ""
-    private lateinit var sharedPrefs: SharedPrefsWrapper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
-        sharedPrefs = (application as SyncSongApplication).sharedPrefsWrapper
 
         // TODO change this to Authorization flow.
         login()
@@ -87,6 +82,6 @@ class StartupActivity : AppCompatActivity() {
         }
 
         Log.d(this.tag(), "Sending user details request")
-        (application as SyncSongApplication).volleyQueue.add(userDetailsRequest)
+        volleyQueue.add(userDetailsRequest)
     }
 }

@@ -1,26 +1,23 @@
 package red.padraig.syncsong.ui.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_create_lobby.*
 import red.padraig.syncsong.R
 import red.padraig.syncsong.tag
 
 
-class CreateLobbyActivity : AppCompatActivity() {
+class CreateLobbyActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_lobby)
 
         createlobby_btn_create.setOnClickListener {
-            val queue = Volley.newRequestQueue(this)
             val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_createlobby)
 
             Log.d(this.tag(), "creating lobby: $url")
@@ -44,7 +41,7 @@ class CreateLobbyActivity : AppCompatActivity() {
                 }
             }
 
-            queue.add(createRequest)
+            volleyQueue.add(createRequest)
         }
     }
 }

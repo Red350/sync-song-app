@@ -2,13 +2,11 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_lobby_list.*
@@ -17,7 +15,7 @@ import red.padraig.syncsong.R
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.LobbyAdapter
 
-class LobbyListActivity : AppCompatActivity() {
+class LobbyListActivity : BaseActivity() {
 
     private val lobbyList = mutableListOf<Lobby>()
     private lateinit var lobbyAdapter: LobbyAdapter
@@ -46,7 +44,6 @@ class LobbyListActivity : AppCompatActivity() {
     }
 
     private fun getLobbies() {
-        val queue = Volley.newRequestQueue(this)
         val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_lobbies)
 
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
@@ -70,7 +67,7 @@ class LobbyListActivity : AppCompatActivity() {
                     Toast.makeText(this, "Error getting lobbies: ${String(error.networkResponse.data)}", Toast.LENGTH_LONG).show()
                 }
         )
-        queue.add(jsonObjectRequest)
+        volleyQueue.add(jsonObjectRequest)
     }
 
     private fun joinLobby(id: String) {

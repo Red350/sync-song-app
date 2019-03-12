@@ -22,5 +22,6 @@
         <item>Pop</item>
         <item>Electronica</item>
     </string-array>
+    <string name="title_activity_base">BaseActivity</string>
 
 </resources>
