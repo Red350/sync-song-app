@@ -10,7 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_lobby_list.*
-import red.padraig.syncsong.Lobby
+import red.padraig.syncsong.data.Lobby
 import red.padraig.syncsong.R
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.LobbyAdapter

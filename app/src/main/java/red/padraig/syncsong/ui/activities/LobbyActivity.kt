@@ -20,6 +20,9 @@ import java.net.URI
 
 class LobbyActivity : AppCompatActivity() {
 
+    companion object {
+        const val SEARCH_REQUEST_CODE = 1
+    }
     private lateinit var id: String
     private lateinit var socket: WebSocketClient
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
@@ -41,7 +44,7 @@ class LobbyActivity : AppCompatActivity() {
             lobby_et_message.setText("")
         }
         lobby_btn_playpause.setOnClickListener { togglePlay() }
-        lobby_btn_search.setOnClickListener { startActivity(Intent(this, SearchActivity::class.java)) }
+        lobby_btn_search.setOnClickListener { startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE) }
     }
 
     override fun onStart() {
@@ -77,6 +80,12 @@ class LobbyActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // TODO read the song result and set it as the current spotify song.
     }
 
     private fun connectToServer() {
