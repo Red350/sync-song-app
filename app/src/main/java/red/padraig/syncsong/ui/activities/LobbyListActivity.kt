@@ -10,8 +10,9 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_lobby_list.*
-import red.padraig.syncsong.data.Lobby
 import red.padraig.syncsong.R
+import red.padraig.syncsong.data.Lobby
+import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.LobbyAdapter
 
@@ -53,18 +54,19 @@ class LobbyListActivity : BaseActivity() {
                     val parser = JsonParser()
                     val jObject = parser.parse(response.toString()) as JsonObject
                     jObject.entrySet().forEach {
+                        val lobby = it.value.asJsonObject
                         lobbyList.add(Lobby(
                                 it.key,
-                                it.value.asJsonObject["name"].asString,
-                                it.value.asJsonObject["genre"].asString,
-                                it.value.asJsonObject["numMembers"].asInt,
-                                it.value.asJsonObject["public"].asBoolean
+                                lobby["name"].asString,
+                                lobby["genre"].asString,
+                                lobby["numMembers"].asInt,
+                                lobby["public"].asBoolean
                         ))
                     }
                     lobbyAdapter.notifyDataSetChanged()
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(this, "Error getting lobbies: ${String(error.networkResponse.data)}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error getting lobbies: ${error.printableError()}", Toast.LENGTH_LONG).show()
                 }
         )
         volleyQueue.add(jsonObjectRequest)

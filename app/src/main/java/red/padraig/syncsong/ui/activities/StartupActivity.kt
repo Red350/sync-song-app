@@ -13,6 +13,7 @@ import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import red.padraig.syncsong.R
+import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
 
 
@@ -71,7 +72,7 @@ class StartupActivity : BaseActivity() {
                     startActivity(Intent(this, LobbyListActivity::class.java))
                 },
                 Response.ErrorListener { error ->
-                    Log.e(this.tag(), "Error getting user details: ${String(error.networkResponse.data)}")
+                    Log.e(this.tag(), "Error getting user details: ${error.printableError()}")
                     Toast.makeText(this, "Unable to get user details", Toast.LENGTH_LONG).show()
                 }) {
             override fun getHeaders(): MutableMap<String, String> {
