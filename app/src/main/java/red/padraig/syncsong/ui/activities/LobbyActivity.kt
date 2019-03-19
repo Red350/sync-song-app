@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_lobby.*
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
+import red.padraig.syncsong.data.Track
 import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.unescapeSpecialCharacters
@@ -27,6 +28,7 @@ class LobbyActivity : AppCompatActivity() {
     private lateinit var socket: WebSocketClient
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private var playing = false
+    private lateinit var currentTrack: Track
 
     private var titleRegex = Regex("""\{name: (.*)\}\"\}""")
 
@@ -85,7 +87,14 @@ class LobbyActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // TODO read the song result and set it as the current spotify song.
+        if (requestCode != SEARCH_REQUEST_CODE) return
+
+        if (data != null) {
+            val track = data.getParcelableExtra<Track>("track")
+            // TODO add this to a queue based on lobby mode
+            currentTrack = track
+        }
+
     }
 
     private fun connectToServer() {
@@ -132,9 +141,10 @@ class LobbyActivity : AppCompatActivity() {
         }
     }
 
-    private fun play() {
-        Log.d(this.tag(), "Playing")
-        mSpotifyAppRemote?.playerApi?.play("spotify:track:5ZrrXIYTvjXPKVQMjqaumR")
+    private fun play(uri: String) {
+        Log.d(this.tag(), "Playing $uri")
+        // URI example: spotify:track:5ZrrXIYTvjXPKVQMjqaumR
+        mSpotifyAppRemote?.playerApi?.play(uri)
         playing = true
     }
 
@@ -166,7 +176,7 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun parseMessage(msg: String) {
         when {
-            msg.contains("{command: play}") -> play()
+            msg.contains("{command: play}") -> play(currentTrack.uri)
             msg.contains("{command: pause}") -> pause()
             titleRegex.containsMatchIn(msg) -> {
                 setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))

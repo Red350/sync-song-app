@@ -1,5 +1,7 @@
 package red.padraig.syncsong.ui.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -27,12 +29,14 @@ class SearchActivity : BaseActivity() {
     private val trackList = mutableListOf<Track>()
     private lateinit var trackAdapter: TrackAdapter
 
-    val baseUrl: Uri.Builder = Uri.Builder()
+    val baseUrl = Uri.Builder()
             .scheme("https")
             .authority("api.spotify.com")
             .appendPath("v1")
             .appendPath("search")
             .appendQueryParameter("type", "track")
+            .build()
+            .toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +45,11 @@ class SearchActivity : BaseActivity() {
         trackAdapter = TrackAdapter(this, trackList)
         search_lv_tracks.adapter = trackAdapter
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
-            Log.d(this.tag(), trackList[i].toString())
+            // Return the selected track to the Lobby activity.
+            val returnIntent = Intent()
+            returnIntent.putExtra("track", trackList[i])
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
         }
 
         // TextWatcher that performs a spotify search after a specified delay since last character.
@@ -52,16 +60,19 @@ class SearchActivity : BaseActivity() {
             private val DELAY = 500L
 
             override fun afterTextChanged(searchQuery: Editable?) {
+                // The timer should be cancelled even when an empty search is entered.
                 timer.cancel()
+                if (searchQuery.toString() == "") return
                 timer = Timer()
                 timer.schedule(object : TimerTask() {
                     override fun run() {
-                        val searchUrl = baseUrl.appendQueryParameter("q", searchQuery.toString()).build()
+                        val searchUrl = "$baseUrl&q=$searchQuery"
+                        val tempTrackList = mutableListOf<Track>()
                         val jsonObjectRequest = object : JsonObjectRequest(Request.Method.GET,
-                                searchUrl.toString(), null,
+                                searchUrl, null,
                                 Response.Listener { response ->
                                     Log.d(this@SearchActivity.tag(), "Search response: $response")
-                                    trackList.clear()
+                                    tempTrackList.clear()   // Probably not necessary, but left over from before I used a temp list.
                                     val parser = JsonParser()
                                     val tracks = parser.parse(response.toString()).asJsonObject["tracks"].asJsonObject["items"].asJsonArray
 
@@ -77,6 +88,11 @@ class SearchActivity : BaseActivity() {
 
                                         // Album art URIs are stored in an array in descending order of size, we're looking for the smallest.
                                         val images = it.asJsonObject["album"].asJsonObject["images"].asJsonArray
+                                        // We should still add a track without album art.
+                                        if (images.size() == 0) {
+                                            addTrack(tempTrackList, Track(uri, name, artists, null))
+                                            return@forEach  // Don't send an image request.
+                                        }
                                         // Images are stored in descending order of size, we're looking for the second largest (300x300 px).
                                         // If for whatever reason there is only a single image in the array, we just take that instead.
                                         val imageIndex = when(images.size()) {
@@ -90,11 +106,7 @@ class SearchActivity : BaseActivity() {
                                                 imageUrl,
                                                 Response.Listener<Bitmap> { artwork ->
                                                     Log.d(this@SearchActivity.tag(), "Received artwork response: $imageUrl")
-                                                    trackList.add(Track(uri, name, artists, artwork))
-                                                    // TODO look into whether calling this multiple times can cause issues. Seems fine currently.
-                                                    // An alternate solution would be to keep track of the number of requests sent vs responses received, and trigger after all responses received.
-                                                    // Volley might also have some support for batch requests such as this.
-                                                    trackAdapter.notifyDataSetChanged()
+                                                    addTrack(tempTrackList, Track(uri, name, artists, artwork))
                                                 },
                                                 0,
                                                 0,
@@ -103,13 +115,13 @@ class SearchActivity : BaseActivity() {
                                                 Response.ErrorListener { error ->
                                                     Log.e(this@SearchActivity.tag(), "Failed to get album art: ${error.printableError()}")
                                                     // We should still display a track even if the album art doesn't load.
-                                                    trackList.add(Track(uri, name, artists, null))
+                                                    addTrack(tempTrackList, Track(uri, name, artists, null))
                                                 }
                                         ))
                                     }
                                 },
                                 Response.ErrorListener { error ->
-                                    Log.e(this@SearchActivity.tag(), "$error: ${error.networkResponse}")
+                                    Log.e(this@SearchActivity.tag(), "Spotify search request failed: ${error.printableError()}")
                                     Toast.makeText(this@SearchActivity, "Error connecting to Spotify search: $error", Toast.LENGTH_LONG).show()
                                 }
                         ) {
@@ -119,16 +131,33 @@ class SearchActivity : BaseActivity() {
                                 return headers
                             }
                         }
-                        Log.d(this@SearchActivity.tag(), "Sending search request: $searchQuery")
+                        Log.d(this@SearchActivity.tag(), "Sending search request for \"$searchQuery\" ($searchUrl)")
                         volleyQueue.add(jsonObjectRequest)
                     }
                 }, DELAY)
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // TODO strip newline characters and perform search immediately when user hits enter.
+            }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         })
+    }
+
+
+    // TODO look into whether calling this multiple times can cause issues. Seems fine currently.
+    // An alternate solution would be to keep track of the number of requests sent vs responses received, and trigger after all responses received.
+    // Volley might also have some support for batch requests such as this.
+    private fun addTrack(tempTrackList: MutableList<Track>, track: Track) {
+        tempTrackList.add(track)
+        // This isn't the neatest solution, but previously when I was editing the trackList directly,
+        // there was a race condition that could result in the adapter trying to access outside of the array.
+        // It's possible this could be solved by calling notifyDataSetChanged() after clearing the array,
+        // but this solution works and doesn't seem to affect performance.
+        trackList.clear()
+        trackList.addAll(tempTrackList)
+        trackAdapter.notifyDataSetChanged()
     }
 }
