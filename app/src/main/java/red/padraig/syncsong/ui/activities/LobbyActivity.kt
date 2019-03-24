@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import kotlinx.android.synthetic.main.activity_lobby.*
+import kotlinx.android.synthetic.main.row_track.*
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
@@ -45,13 +45,11 @@ class LobbyActivity : BaseActivity() {
 
         connectToServer()
 
-        lobby_btn_connect.setOnClickListener { connectToServer() }
         lobby_btn_send.setOnClickListener {
             sendMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
         }
         lobby_btn_playpause.setOnClickListener { togglePlay() }
-        lobby_btn_search.setOnClickListener { startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE) }
     }
 
     override fun onStart() {
@@ -71,7 +69,7 @@ class LobbyActivity : BaseActivity() {
                         mSpotifyAppRemote?.playerApi?.subscribeToPlayerState()?.setEventCallback {
                             val track = it.track
                             if (track != null) {
-                                lobby_tv_track.text = (track.name + " by " + track.artist.name)
+                                setCurrentTrackUI(track)
                             }
                         }
 
@@ -118,8 +116,7 @@ class LobbyActivity : BaseActivity() {
         socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$id/join")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection opened")
-                setConnectionState(true)
-                setStatus("Connected")
+                setConnectionStateWithReconnect(true)
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -130,10 +127,8 @@ class LobbyActivity : BaseActivity() {
                         Toast.makeText(this@LobbyActivity, "Lobby does not exist", Toast.LENGTH_SHORT).show()
                         onBackPressed()
                     }
-
                 }
-                setConnectionState(false)
-                setStatus("Closed")
+                setConnectionStateWithReconnect(false)
             }
 
             override fun onMessage(message: String?) {
@@ -143,11 +138,16 @@ class LobbyActivity : BaseActivity() {
 
             override fun onError(ex: Exception?) {
                 Log.d(this@LobbyActivity.tag(), "Error: $ex")
-                setConnectionState(false)
-                setStatus("Error: $ex")
+                setConnectionStateWithReconnect(false)
             }
         }
         socket.connect()
+    }
+
+    private fun setCurrentTrackUI(track: com.spotify.protocol.types.Track) {
+        rowtrack_tv_name.text = track.name
+        rowtrack_tv_artist.text = track.artist.name
+        // TODO get the album art.
     }
 
     private fun togglePlay() {
@@ -171,20 +171,13 @@ class LobbyActivity : BaseActivity() {
         playing = false
     }
 
-    private fun setConnectionState(connected: Boolean) {
+    // Displays the connection state, an attempts to reconnect to the server if disconnected.
+    private fun setConnectionStateWithReconnect(connected: Boolean) {
         this.runOnUiThread {
-            lobby_btn_connect.visibility = if (connected) View.INVISIBLE else View.VISIBLE
             lobby_btn_send.isEnabled = connected
+            supportActionBar?.subtitle = if (connected) "Connected" else "Disconnected"
+            if (!connected) connectToServer()
         }
-    }
-
-    private fun setStatus(status: String) {
-        this.runOnUiThread { lobby_tv_status.text = " ($status)" }
-    }
-
-    private fun setLobbyName(name: String?) {
-        Log.d(this.tag(), "Setting name to $name")
-        this.runOnUiThread { lobby_tv_title.text = name }
     }
 
     private fun displayMessage(msg: String) {

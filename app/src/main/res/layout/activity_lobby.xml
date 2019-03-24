@@ -8,55 +8,31 @@
 
     <include layout="@layout/common_toolbar" />
 
-
     <RelativeLayout
         android:id="@+id/lobby_RL_controls"
         android:layout_below="@id/common_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/lobby_tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Lobby name" />
+        <include layout="@layout/row_track" />
 
-        <TextView
-            android:id="@+id/lobby_tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/lobby_tv_title" />
-
-        <Button
-            android:id="@+id/lobby_btn_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/lobby_tv_status"
-            android:text="Reconnect"
-            android:visibility="invisible" />
 
         <Button
             android:id="@+id/lobby_btn_playpause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lobby_btn_connect"
+            android:layout_below="@id/row_track"
             android:enabled="false"
             android:text="Play/Pause" />
 
-        <TextView
-            android:id="@+id/lobby_tv_track"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lobby_btn_connect"
-            android:layout_toEndOf="@id/lobby_btn_playpause"
-            android:text="Loading song..." />
-
         <Button
-            android:id="@+id/lobby_btn_search"
+            android:id="@+id/lobby_btn_voteskip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lobby_btn_playpause"
-            android:text="Search" />
+            android:layout_toEndOf="@id/lobby_btn_playpause"
+            android:layout_below="@id/row_track"
+            android:enabled="false"
+            android:text="Vote to skip" />
 
     </RelativeLayout>
 
