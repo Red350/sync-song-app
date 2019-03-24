@@ -31,9 +31,6 @@
             android:name=".ui.activities.LobbyListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.PrototypeActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.CreateLobbyActivity"
             android:screenOrientation="portrait" />
         <activity
