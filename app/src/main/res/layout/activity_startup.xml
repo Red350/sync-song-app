@@ -6,8 +6,11 @@
     tools:context=".ui.activities.StartupActivity">
 
     <TextView
-        android:id="@+id/startup_tv_token"
+        android:id="@+id/startup_tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connecting to Spotify..." />
+        android:layout_centerInParent="true"
+        android:text="@string/app_name_lowercase"
+        android:textColor="@color/titleGreen"
+        android:textSize="50sp" />
 </RelativeLayout>
