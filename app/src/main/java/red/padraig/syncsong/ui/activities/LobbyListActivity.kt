@@ -27,10 +27,21 @@ class LobbyListActivity : BaseActivity() {
 
         lobbylist_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
 
+        // Display the refresh icon immediately.
+        lobbylist_SRL_lobbies.isRefreshing = true
+
+        // Initialise lobby list view.
         lobbyAdapter = LobbyAdapter(this, lobbyList)
         lobbylist_lv_lobbies.adapter = lobbyAdapter
         lobbylist_lv_lobbies.setOnItemClickListener { _, _, i, _ ->
             joinLobby(lobbyList[i].id)
+        }
+
+        // Initialise swipe to refresh.
+        lobbylist_SRL_lobbies.setOnRefreshListener {
+            lobbyList.clear()
+            lobbyAdapter.notifyDataSetChanged()
+            getLobbies()
         }
 
         // TODO replace this with pull down to refresh
@@ -44,6 +55,8 @@ class LobbyListActivity : BaseActivity() {
         getLobbies()
     }
 
+    // Request a list of lobbies from the server.
+    // On response, this updates and notifies the lobbyAdatper.
     private fun getLobbies() {
         val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_lobbies)
 
@@ -64,6 +77,8 @@ class LobbyListActivity : BaseActivity() {
                         ))
                     }
                     lobbyAdapter.notifyDataSetChanged()
+                    // Hide the refreshing icon displayed by the SwipeRefreshLayout.
+                    lobbylist_SRL_lobbies.isRefreshing = false
                 },
                 Response.ErrorListener { error ->
                     Toast.makeText(this, "Error getting lobbies: ${error.printableError()}", Toast.LENGTH_LONG).show()

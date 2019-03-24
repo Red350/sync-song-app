@@ -12,11 +12,19 @@
         android:layout_height="wrap_content"
         android:text="Get lobbies" />
 
-    <ListView
-        android:id="@+id/lobbylist_lv_lobbies"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/getlobbies" />
+        android:id="@+id/lobbylist_SRL_lobbies"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/getlobbies">
+
+        <ListView
+            android:id="@+id/lobbylist_lv_lobbies"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/lobbylist_btn_createlobby"
