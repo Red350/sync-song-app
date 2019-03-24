@@ -12,7 +12,6 @@ import com.google.gson.JsonParser
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
-import kotlinx.android.synthetic.main.activity_startup.*
 import red.padraig.syncsong.R
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
@@ -29,7 +28,6 @@ class StartupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
 
-        setFont(startup_tv_title, getString(R.string.font_moiser))
         // TODO change this to Authorization flow.
         login()
     }

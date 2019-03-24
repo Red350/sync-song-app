@@ -10,26 +10,55 @@
         android:layout_marginEnd="20dp"
         android:text="Lobby name" />
 
-    <TextView
-        android:id="@+id/rowlobby_tv_genre"
+    <LinearLayout
+        android:id="@+id/rowlobby_LL_nummembers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/rowlobby_tv_name"
-        android:text="Genre" />
+        android:layout_below="@id/rowlobby_tv_name">
 
-    <TextView
-        android:id="@+id/rowlobby_tv_nummembers"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_person_black_24dp" />
+
+        <TextView
+            android:id="@+id/rowlobby_tv_nummembers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="42" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rowlobby_LL_genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/rowlobby_tv_name"
-        android:layout_marginEnd="20dp"
-        android:text="42" />
+        android:layout_toEndOf="@id/rowlobby_LL_nummembers">
 
-    <TextView
-        android:id="@+id/rowlobby_tv_pubpriv"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_music_note_black_24dp" />
+
+        <TextView
+            android:id="@+id/rowlobby_tv_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/rowlobby_tv_name"
+            android:text="Genre" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/rowlobby_iv_private"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rowlobby_tv_name"
-        android:layout_toEndOf="@id/rowlobby_tv_nummembers"
-        android:text="Public" />
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_lock_outline_black_24dp" />
+
 </RelativeLayout>

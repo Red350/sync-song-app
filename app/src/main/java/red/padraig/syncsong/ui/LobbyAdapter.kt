@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
@@ -20,7 +21,9 @@ class LobbyAdapter(context: Context, private val data: List<Lobby>): BaseAdapter
         view?.findViewById<TextView>(R.id.rowlobby_tv_name)?.text = lobby.name
         view?.findViewById<TextView>(R.id.rowlobby_tv_genre)?.text = lobby.genre
         view?.findViewById<TextView>(R.id.rowlobby_tv_nummembers)?.text = lobby.numMembers.toString()
-        view?.findViewById<TextView>(R.id.rowlobby_tv_pubpriv)?.text = lobby.public.toString()
+
+        // Private lobbies display a lock icon.
+        view?.findViewById<ImageView>(R.id.rowlobby_iv_private)?.visibility = if (lobby.public) View.INVISIBLE else View.VISIBLE
         return view
     }
 
