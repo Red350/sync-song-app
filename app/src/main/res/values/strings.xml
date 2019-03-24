@@ -27,5 +27,6 @@
 
     <!-- Custom font names -->
     <string name="font_moiser">moiser.ttf</string>
+    <string name="lobby_message_hint">Type your message</string>
 
 </resources>

@@ -35,7 +35,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.LobbyActivity"
-            android:screenOrientation="portrait" /> <!-- Spotify Activities -->
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <!-- Spotify Activities -->
         <!-- TODO this should have been automatically added but wasn't, not sure if it's required -->
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
