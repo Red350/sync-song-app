@@ -6,8 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.LobbyActivity">
 
+    <include layout="@layout/common_toolbar" />
+
+
     <RelativeLayout
         android:id="@+id/lobby_RL_controls"
+        android:layout_below="@id/common_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

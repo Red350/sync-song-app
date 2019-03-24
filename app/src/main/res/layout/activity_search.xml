@@ -5,9 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.SearchActivity">
 
+    <include layout="@layout/common_toolbar" />
+
     <EditText
         android:id="@+id/search_et_search"
         android:layout_width="match_parent"
+        android:layout_below="@id/common_toolbar"
         android:layout_height="wrap_content"
         android:hint="Search"
         android:singleLine="true" />

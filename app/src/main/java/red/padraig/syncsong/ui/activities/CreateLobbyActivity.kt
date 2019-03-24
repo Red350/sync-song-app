@@ -17,6 +17,8 @@ class CreateLobbyActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_lobby)
 
+        initialiseActionBar("Create Lobby")
+
         createlobby_btn_create.setOnClickListener {
             val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_createlobby)
 
@@ -44,4 +46,5 @@ class CreateLobbyActivity : BaseActivity() {
             volleyQueue.add(createRequest)
         }
     }
+
 }

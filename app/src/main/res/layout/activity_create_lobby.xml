@@ -5,21 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.CreateLobbyActivity">
 
-    <TextView
-        android:id="@+id/createlobby_tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="50dp"
-        android:gravity="center"
-        android:text="Create a new lobby"
-        android:textSize="30sp" />
+    <include layout="@layout/common_toolbar" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/createlobby_tv_title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="100dp"-->
+        <!--android:layout_marginBottom="50dp"-->
+        <!--android:gravity="center"-->
+        <!--android:text="Create a new lobby"-->
+        <!--android:textSize="30sp" />-->
 
     <LinearLayout
         android:id="@+id/createlobby_ll_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/createlobby_tv_title"
+        android:layout_marginTop="100dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 

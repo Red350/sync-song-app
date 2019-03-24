@@ -3,6 +3,8 @@ package red.padraig.syncsong.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
@@ -24,6 +26,7 @@ class LobbyActivity : BaseActivity() {
         const val SEARCH_REQUEST_CODE = 1
     }
     private lateinit var id: String
+    private lateinit var lobbyName: String
     private lateinit var socket: WebSocketClient
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private var playing = false
@@ -36,6 +39,9 @@ class LobbyActivity : BaseActivity() {
         setContentView(R.layout.activity_lobby)
 
         id = intent.getStringExtra("LOBBY_ID")
+        lobbyName = intent.getStringExtra("LOBBY_NAME")
+
+        initialiseActionBar(lobbyName)
 
         connectToServer()
 
@@ -93,7 +99,19 @@ class LobbyActivity : BaseActivity() {
             // TODO add this to a queue based on lobby mode
             currentTrack = track
         }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar_lobby, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+        R.id.lobby_menuitem_search -> {
+            startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE)
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun connectToServer() {
@@ -178,7 +196,9 @@ class LobbyActivity : BaseActivity() {
             msg.contains("{command: play}") -> play(currentTrack.uri)
             msg.contains("{command: pause}") -> pause()
             titleRegex.containsMatchIn(msg) -> {
-                setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
+                // TODO stop server from sending this message.
+                // Pass for now, since we get name from the intent.
+                // setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
             }
             else -> displayMessage(msg.unescapeSpecialCharacters())
         }

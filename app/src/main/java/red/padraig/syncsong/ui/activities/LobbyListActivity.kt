@@ -3,6 +3,8 @@ package red.padraig.syncsong.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
@@ -25,6 +27,8 @@ class LobbyListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby_list)
 
+        initialiseActionBar("Lobbies")
+
         lobbylist_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
 
         // Display the refresh icon immediately.
@@ -34,22 +38,32 @@ class LobbyListActivity : BaseActivity() {
         lobbyAdapter = LobbyAdapter(this, lobbyList)
         lobbylist_lv_lobbies.adapter = lobbyAdapter
         lobbylist_lv_lobbies.setOnItemClickListener { _, _, i, _ ->
-            joinLobby(lobbyList[i].id)
+            joinLobby(lobbyList[i].id, lobbyList[i].name)
         }
 
         // Initialise swipe to refresh.
         lobbylist_SRL_lobbies.setOnRefreshListener {
-            lobbyList.clear()
-            lobbyAdapter.notifyDataSetChanged()
-            getLobbies()
+            refreshLobbies()
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        // TODO add a loading icon until this completes
         getLobbies()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar_lobbylist, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+        R.id.lobbylist_menuitem_refresh -> {
+            refreshLobbies()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     // Request a list of lobbies from the server.
@@ -84,9 +98,16 @@ class LobbyListActivity : BaseActivity() {
         volleyQueue.add(jsonObjectRequest)
     }
 
-    private fun joinLobby(id: String) {
+    private fun refreshLobbies() {
+        lobbyList.clear()
+        lobbyAdapter.notifyDataSetChanged()
+        getLobbies()
+    }
+
+    private fun joinLobby(id: String, title: String) {
         val intent = Intent(this, LobbyActivity::class.java)
         intent.putExtra("LOBBY_ID", id)
+        intent.putExtra("LOBBY_NAME", title)
         startActivity(intent)
     }
 }

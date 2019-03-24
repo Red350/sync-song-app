@@ -45,6 +45,8 @@ class SearchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        initialiseActionBar("Search Spotify")
+
         trackAdapter = TrackAdapter(this, trackList)
         search_lv_tracks.adapter = trackAdapter
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
@@ -52,6 +54,7 @@ class SearchActivity : BaseActivity() {
             val returnIntent = Intent()
             returnIntent.putExtra("track", trackList[i])
             setResult(Activity.RESULT_OK, returnIntent)
+            hideKeyboard()  // Otherwise keyboard will remain visible on lobby screen.
             finish()
         }
 

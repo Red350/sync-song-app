@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.android.volley.RequestQueue
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.android.synthetic.main.common_toolbar.*
 import red.padraig.syncsong.SharedPrefsWrapper
 import red.padraig.syncsong.SyncSongApplication
 
@@ -37,5 +38,10 @@ abstract class BaseActivity : AppCompatActivity() {
     fun hideKeyboard() {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+    }
+
+    fun initialiseActionBar(title: String) {
+        setSupportActionBar(common_toolbar)
+        supportActionBar?.title = title
     }
 }
