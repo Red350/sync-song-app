@@ -2,7 +2,6 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -19,7 +18,7 @@ import red.padraig.syncsong.tag
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 
-class LobbyActivity : AppCompatActivity() {
+class LobbyActivity : BaseActivity() {
 
     companion object {
         const val SEARCH_REQUEST_CODE = 1

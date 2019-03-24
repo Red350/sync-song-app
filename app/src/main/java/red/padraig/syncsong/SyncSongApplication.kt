@@ -22,7 +22,7 @@ class SyncSongApplication : Application() {
         ViewPump.init(ViewPump.builder()
                 .addInterceptor(CalligraphyInterceptor(
                         CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/Montserrat-Medium.ttf")
+                                .setDefaultFontPath("fonts/Montserrat-Regular.ttf")
                                 .setFontAttrId(R.attr.fontPath)
                                 .build()))
                 .build())
