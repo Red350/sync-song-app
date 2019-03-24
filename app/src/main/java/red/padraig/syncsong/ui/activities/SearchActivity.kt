@@ -30,6 +30,7 @@ class SearchActivity : BaseActivity() {
     private val trackList = mutableListOf<Track>()
     private lateinit var trackAdapter: TrackAdapter
     private var searchDelayTimer = Timer()
+    private var lastSearch = ""
 
     private val baseUrl = Uri.Builder()
             .scheme("https")
@@ -93,19 +94,17 @@ class SearchActivity : BaseActivity() {
                 }, DELAY)
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // TODO strip newline characters and perform search immediately when user hits enter.
-                print("hello")
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                print("here")
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         })
     }
 
     private fun performSearchRequest(searchQuery: String) {
+        // Avoid sending a duplicate search request.
+        if (searchQuery == lastSearch) return
+        lastSearch = searchQuery
         val searchUrl = "$baseUrl&q=$searchQuery"
         val tempTrackList = mutableListOf<Track>()
         val jsonObjectRequest = object : JsonObjectRequest(Request.Method.GET,
