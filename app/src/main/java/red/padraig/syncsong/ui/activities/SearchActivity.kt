@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
+import android.widget.AbsListView
 import android.widget.ImageView
 import android.widget.Toast
 import com.android.volley.Request
@@ -51,6 +53,21 @@ class SearchActivity : BaseActivity() {
             setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }
+
+        // Set a scroll listener to hide the keyboard when the user scrolls the list view.
+        search_lv_tracks.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+                // Pass.
+            }
+
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+                if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+                }
+            }
+
+        })
 
         // TextWatcher that performs a spotify search after a specified delay since last character.
         // Debounce code taken from https://stackoverflow.com/a/54901542
