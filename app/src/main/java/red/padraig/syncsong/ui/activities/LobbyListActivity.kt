@@ -43,9 +43,6 @@ class LobbyListActivity : BaseActivity() {
             lobbyAdapter.notifyDataSetChanged()
             getLobbies()
         }
-
-        // TODO replace this with pull down to refresh
-        getlobbies.setOnClickListener { getLobbies() }
     }
 
     override fun onResume() {
