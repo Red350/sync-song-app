@@ -11,6 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:shadowColor="@color/titleGreen"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="15"
         android:text="@string/app_name_lowercase"
         android:textColor="@color/titleGreen"
         android:textSize="50sp" />
