@@ -14,20 +14,31 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/rowtrack_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="Name" />
+            android:drawableStart="@drawable/ic_music_note_black_24dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Song name"
+            android:layout_marginBottom="5dp"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/rowtrack_tv_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Artist" />
+            android:drawableStart="@drawable/ic_person_black_24dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Artist name"
+            android:textSize="14sp" />
+
+
     </LinearLayout>
 
 </LinearLayout>

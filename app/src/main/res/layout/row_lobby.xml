@@ -2,58 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="10dp">
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp">
 
     <TextView
         android:id="@+id/rowlobby_tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Lobby name" />
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="Lobby name"
+        android:textSize="20sp" />
 
-    <LinearLayout
-        android:id="@+id/rowlobby_LL_nummembers"
+    <TextView
+        android:id="@+id/rowlobby_tv_nummembers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/rowlobby_tv_name"
         android:layout_marginEnd="10dp"
-        android:minWidth="50dp">
+        android:drawableStart="@drawable/ic_person_black_24dp"
+        android:minWidth="50dp"
+        android:text="42" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:src="@drawable/ic_person_black_24dp" />
-
-        <TextView
-            android:id="@+id/rowlobby_tv_nummembers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="42" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/rowlobby_LL_genre"
+    <TextView
+        android:id="@+id/rowlobby_tv_genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/rowlobby_tv_name"
-        android:layout_toEndOf="@id/rowlobby_LL_nummembers">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:src="@drawable/ic_music_note_black_24dp" />
-
-        <TextView
-            android:id="@+id/rowlobby_tv_genre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/rowlobby_tv_name"
-            android:text="Genre" />
-
-    </LinearLayout>
+        android:layout_toEndOf="@id/rowlobby_tv_nummembers"
+        android:drawableStart="@drawable/ic_music_note_black_24dp"
+        android:text="Genre" />
 
     <ImageView
         android:id="@+id/rowlobby_iv_private"

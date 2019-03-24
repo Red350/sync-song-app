@@ -10,6 +10,7 @@ import android.widget.TextView
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Track
 
+// Adapter for displaying track information in a list view.
 class TrackAdapter(val context: Context, private val data: List<Track>): BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -17,14 +18,30 @@ class TrackAdapter(val context: Context, private val data: List<Track>): BaseAda
     override fun getView(i: Int, convertView: View?, parent: ViewGroup?): View? {
         var view = convertView
         if (view == null) view = inflater.inflate(R.layout.row_track, parent, false)
+
+        // At this stage the view will never be null, but this check allows kotlin to smart cast view to a non nullable View.
+        if (view == null) return view
+
+        val trackNameView = view.findViewById<TextView>(R.id.rowtrack_tv_name)
+        val artistNameView = view.findViewById<TextView>(R.id.rowtrack_tv_artist)
+        val artworkView = view.findViewById<ImageView>(R.id.rowtrack_iv_artwork)
+
+        // Load track info into the respective views.
         val track = data[i]
-        view?.findViewById<TextView>(R.id.rowtrack_tv_name)?.text = track.name
-        view?.findViewById<TextView>(R.id.rowtrack_tv_artist)?.text = track.artist
+        trackNameView.text = track.name
+        artistNameView.text = track.artist
+        // If the artwork is not available, a default image will be displayed instead.
         if (track.artwork != null) {
-            view?.findViewById<ImageView>(R.id.rowtrack_iv_artwork)?.setImageBitmap(track.artwork)
+            artworkView.setImageBitmap(track.artwork)
         } else {
-            view?.findViewById<ImageView>(R.id.rowtrack_iv_artwork)?.setImageDrawable(context.getDrawable(R.drawable.ic_broken_image_black_64dp))
+            artworkView.setImageDrawable(context.getDrawable(R.drawable.ic_broken_image_black_64dp))
         }
+
+        // Selecting these two views allows them to marquee scroll in situations where their text will not fit on screen.
+        // This is done through a delayed call, so as to give the user time to read the start of the text before it scrolls.
+        artistNameView.postDelayed( { artistNameView.isSelected = true }, 1000)
+        trackNameView.postDelayed( { trackNameView.isSelected = true }, 1000)
+
         return view
     }
 
