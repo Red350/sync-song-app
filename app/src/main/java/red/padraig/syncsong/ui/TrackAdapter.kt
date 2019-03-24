@@ -39,6 +39,10 @@ class TrackAdapter(val context: Context, private val data: List<Track>): BaseAda
 
         // Selecting these two views allows them to marquee scroll in situations where their text will not fit on screen.
         // This is done through a delayed call, so as to give the user time to read the start of the text before it scrolls.
+        // Also due to how listview recycles its views, we need to un-select them at this stage or they may still be
+        // selected from a previous time being displayed.
+        artistNameView.isSelected = false
+        trackNameView.isSelected = false
         artistNameView.postDelayed( { artistNameView.isSelected = true }, 1000)
         trackNameView.postDelayed( { trackNameView.isSelected = true }, 1000)
 

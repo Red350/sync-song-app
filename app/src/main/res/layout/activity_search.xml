@@ -9,7 +9,8 @@
         android:id="@+id/search_et_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search" />
+        android:hint="Search"
+        android:singleLine="true" />
 
     <ListView
         android:id="@+id/search_lv_tracks"
