@@ -34,42 +34,77 @@
             android:enabled="false"
             android:text="Vote to skip" />
 
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/lobby_line_controlsqueue"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/lobby_RL_controls"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorPrimary" />
+
+    <RelativeLayout
+        android:id="@+id/lobby_LL_queue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lobby_line_controlsqueue"
+        android:orientation="vertical">
+
         <LinearLayout
-            android:id="@+id/lobby_tv_queuetitle"
+            android:id="@+id/lobby_LL_queuetitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lobby_btn_voteskip">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Song Queue"
+                android:text="@string/song_queue_title"
                 android:textSize="25sp" />
 
             <ImageView
+                android:id="@+id/lobby_iv_queuechevron"
                 android:layout_width="40sp"
                 android:layout_height="40sp"
-                android:id="@+id/lobby_iv_queuechevron"
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/lobby_queue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lobby_LL_queuetitle"
+            android:visibility="gone"
+            android:text="Song 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\n"
+            tools:layout_height="wrap_content" />
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/lobby_line_queuemessage"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/lobby_LL_queue"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorPrimary" />
 
     <ScrollView
         android:id="@+id/lobby_scroll_messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/lobby_LL_messageinput"
-        android:layout_below="@id/lobby_RL_controls">
+        android:layout_below="@id/lobby_line_queuemessage">
 
         <TextView
             android:id="@+id/lobby_tv_messages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            tools:visibility="visible"
             tools:text="User 1: Hello\nUser 2: Hi" />
 
     </ScrollView>

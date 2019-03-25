@@ -2,9 +2,12 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
@@ -55,9 +58,20 @@ class LobbyActivity : BaseActivity() {
 
         lobby_btn_playpause.setOnClickListener { togglePlay() }
 
-        lobby_tv_queuetitle.setOnClickListener {
+        lobby_LL_queuetitle.setOnClickListener {
             toggleSongQueue()
         }
+
+        // Automatically scroll message view to show new messages.
+        // TODO this will obviously make it difficult to scroll back to view messages when receiving
+        // new messages. Not a huge priority though as I can't think of a trivial fix.
+        lobby_tv_messages.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                lobby_scroll_messages.scrollTo(0, lobby_scroll_messages.bottom)
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     override fun onStart() {
@@ -159,8 +173,26 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun toggleSongQueue() {
-        // TODO implement a list of queued songs, make view visible here.
-        lobby_iv_queuechevron.animate().rotationBy(180f).start()
+        if (queueOpen) {
+            // Closing the queue.
+            lobby_queue.visibility = View.VISIBLE
+            lobby_queue.alpha = 1.0f
+            lobby_queue.animate().alpha(0.0f).withEndAction {
+                lobby_queue.visibility = View.GONE
+            }
+
+            // Rotate the chevron.
+            lobby_iv_queuechevron.animate().rotation(0.0f)
+        } else {
+            // Opening the queue.
+            lobby_queue.visibility = View.VISIBLE
+            lobby_queue.alpha = 0.0f
+            lobby_queue.animate().alpha(1.0f)
+
+            // Rotate the chevron.
+            lobby_iv_queuechevron.animate().rotation(180.0f)
+        }
+
         queueOpen = !queueOpen
     }
 
