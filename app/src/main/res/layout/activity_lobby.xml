@@ -10,9 +10,9 @@
 
     <RelativeLayout
         android:id="@+id/lobby_RL_controls"
-        android:layout_below="@id/common_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/common_toolbar">
 
         <include layout="@layout/row_track" />
 
@@ -29,10 +29,32 @@
             android:id="@+id/lobby_btn_voteskip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/lobby_btn_playpause"
             android:layout_below="@id/row_track"
+            android:layout_toEndOf="@id/lobby_btn_playpause"
             android:enabled="false"
             android:text="Vote to skip" />
+
+        <LinearLayout
+            android:id="@+id/lobby_tv_queuetitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lobby_btn_voteskip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Song Queue"
+                android:textSize="25sp" />
+
+            <ImageView
+                android:layout_width="40sp"
+                android:layout_height="40sp"
+                android:id="@+id/lobby_iv_queuechevron"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+        </LinearLayout>
+
 
     </RelativeLayout>
 

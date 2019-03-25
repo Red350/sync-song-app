@@ -25,12 +25,15 @@ class LobbyActivity : BaseActivity() {
     companion object {
         const val SEARCH_REQUEST_CODE = 1
     }
+
     private lateinit var id: String
     private lateinit var lobbyName: String
     private lateinit var socket: WebSocketClient
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     private var playing = false
     private lateinit var currentTrack: Track
+
+    private var queueOpen = false
 
     private var titleRegex = Regex("""\{name: (.*)\}\"\}""")
 
@@ -49,7 +52,12 @@ class LobbyActivity : BaseActivity() {
             sendMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
         }
+
         lobby_btn_playpause.setOnClickListener { togglePlay() }
+
+        lobby_tv_queuetitle.setOnClickListener {
+            toggleSongQueue()
+        }
     }
 
     override fun onStart() {
@@ -148,6 +156,12 @@ class LobbyActivity : BaseActivity() {
         rowtrack_tv_name.text = track.name
         rowtrack_tv_artist.text = track.artist.name
         // TODO get the album art.
+    }
+
+    private fun toggleSongQueue() {
+        // TODO implement a list of queued songs, make view visible here.
+        lobby_iv_queuechevron.animate().rotationBy(180f).start()
+        queueOpen = !queueOpen
     }
 
     private fun togglePlay() {
