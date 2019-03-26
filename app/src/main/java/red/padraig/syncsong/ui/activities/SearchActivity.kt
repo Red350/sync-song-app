@@ -45,8 +45,13 @@ class SearchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        initialiseActionBar("Search Spotify")
+        initListeners()
 
+        initialiseActionBar("Search Spotify")
+    }
+
+    private fun initListeners() {
+        // Row listeners.
         trackAdapter = TrackAdapter(this, trackList)
         search_lv_tracks.adapter = trackAdapter
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
@@ -62,10 +67,7 @@ class SearchActivity : BaseActivity() {
 
         // Set a scroll listener to hide the keyboard when the user scrolls the list view.
         search_lv_tracks.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                // Pass.
-            }
-
+            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {}
             override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
                 if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     hideKeyboard()
@@ -98,11 +100,8 @@ class SearchActivity : BaseActivity() {
                     }
                 }, DELAY)
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
         })
     }
 
