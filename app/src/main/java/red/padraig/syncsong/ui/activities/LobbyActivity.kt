@@ -165,7 +165,7 @@ class LobbyActivity : BaseActivity() {
     private fun subscribeToPlayerState() {
         GlobalScope.launch {
             while(true) {
-                setCurrentlyPlayingUI(currentTrack)
+                setCurrentlyPlayingUI(playerState.receive())
             }
         }
     }
@@ -238,7 +238,7 @@ class LobbyActivity : BaseActivity() {
     private fun setConnectionStateWithReconnect(connected: Boolean) {
         this.runOnUiThread {
             lobby_btn_send.isEnabled = connected
-            supportActionBar?.subtitle = if (connected) "Connected" else "Disconnected"
+            supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
             if (!connected) connectToServer()
         }
     }
