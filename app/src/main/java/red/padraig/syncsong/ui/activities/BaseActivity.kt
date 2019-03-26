@@ -12,11 +12,13 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.common_toolbar.*
 import red.padraig.syncsong.SharedPrefsWrapper
 import red.padraig.syncsong.SyncSongApplication
+import red.padraig.syncsong.network.SyncSongAPI
 
 abstract class BaseActivity : AppCompatActivity() {
 
     protected lateinit var sharedPrefs: SharedPrefsWrapper
     protected lateinit var volleyQueue: RequestQueue
+    protected lateinit var syncSongAPI: SyncSongAPI
 
     // Required to inject the context for custom font loading.
     override fun attachBaseContext(base: Context) {
@@ -28,6 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
         sharedPrefs = (application as SyncSongApplication).sharedPrefsWrapper
         volleyQueue = (application as SyncSongApplication).volleyQueue
+        syncSongAPI = (application as SyncSongApplication).syncSongAPI
     }
 
     // Set a custom font for a text view, using a font from the assets/fonts directory.
