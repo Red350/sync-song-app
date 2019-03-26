@@ -2,20 +2,11 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_lobby_list.*
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
-import red.padraig.syncsong.printableError
-import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.LobbyAdapter
 
 class LobbyListActivity : BaseActivity() {
@@ -30,8 +21,6 @@ class LobbyListActivity : BaseActivity() {
         initListeners()
 
         initialiseActionBar("Lobbies")
-
-
     }
 
     private fun initListeners() {
@@ -48,14 +37,14 @@ class LobbyListActivity : BaseActivity() {
 
         // Initialise swipe to refresh.
         lobbylist_SRL_lobbies.setOnRefreshListener {
-            refreshLobbies()
+            this.getLobbies()
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        refreshLobbies()
+        this.getLobbies()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -65,49 +54,28 @@ class LobbyListActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
         R.id.lobbylist_menuitem_refresh -> {
-            refreshLobbies()
+            this.getLobbies()
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
     // Request a list of lobbies from the server.
-    // On response, this updates and notifies the lobbyAdatper.
+    // On response, this updates and notifies the lobbyAdapter.
     private fun getLobbies() {
-        val url = getString(R.string.api_url_1) + getString(R.string.api_port) + getString(R.string.api_endpoint_lobbies)
-
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
-                Response.Listener { response ->
-                    Log.d(this.tag(), "List lobbies response: $response")
-                    lobbyList.clear()
-                    val parser = JsonParser()
-                    val jObject = parser.parse(response.toString()) as JsonObject
-                    jObject.entrySet().forEach {
-                        val lobby = it.value.asJsonObject
-                        lobbyList.add(Lobby(
-                                it.key,
-                                lobby["name"].asString,
-                                lobby["genre"].asString,
-                                lobby["numMembers"].asInt,
-                                lobby["public"].asBoolean
-                        ))
-                    }
-                    lobbyAdapter.notifyDataSetChanged()
-                    // Hide the refreshing icon displayed by the SwipeRefreshLayout.
-                    lobbylist_SRL_lobbies.isRefreshing = false
-                },
-                Response.ErrorListener { error ->
-                    Toast.makeText(this, "Error getting lobbies: ${error.printableError()}", Toast.LENGTH_LONG).show()
-                }
-        )
-        volleyQueue.add(jsonObjectRequest)
-    }
-
-    private fun refreshLobbies() {
+        // Display the refreshing icon and remove the current lobby list.
         lobbylist_SRL_lobbies.isRefreshing = true
         lobbyList.clear()
         lobbyAdapter.notifyDataSetChanged()
-        getLobbies()
+
+        syncSongAPI.getLobbies {
+            lobbyList.clear()   // No harm clearing again since this is asynchronous.
+            lobbyList.addAll(it)
+            lobbyAdapter.notifyDataSetChanged()
+
+            // Hide the refreshing icon.
+            lobbylist_SRL_lobbies.isRefreshing = false
+        }
     }
 
     private fun joinLobby(id: String, title: String) {

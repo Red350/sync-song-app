@@ -27,7 +27,7 @@ class CreateLobbyActivity : BaseActivity() {
                     createlobby_spin_genre.selectedItem.toString(),
                     createlobby_rg_pub.isChecked,
                     Response.Listener { response ->
-                        Log.d(this.tag(), response.toString())
+                        Log.d(this.tag(), "Create lobby response: $response")
                         Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
                         onBackPressed()
                     }

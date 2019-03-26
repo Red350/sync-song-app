@@ -58,7 +58,7 @@ class LobbyActivity : BaseActivity() {
         initialiseActionBar(lobbyName)
 
         // Connect to Sync Song lobby server.
-        connectToServer()
+        joinLobby()
 
         // Create Spotify music player.
         musicPlayer = SpotifyPlayer(applicationContext, playerState)
@@ -131,7 +131,7 @@ class LobbyActivity : BaseActivity() {
     }
 
     // Connect to the Sync Song server via websocket and initialise a message listener.
-    private fun connectToServer() {
+    private fun joinLobby() {
         socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$lobbyID/join")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection opened")
@@ -239,7 +239,7 @@ class LobbyActivity : BaseActivity() {
         this.runOnUiThread {
             lobby_btn_send.isEnabled = connected
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
-            if (!connected) connectToServer()
+            if (!connected) joinLobby()
         }
     }
 
