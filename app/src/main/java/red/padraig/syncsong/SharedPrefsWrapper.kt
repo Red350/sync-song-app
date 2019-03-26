@@ -23,7 +23,7 @@ class SharedPrefsWrapper(context: Context) {
         get() = sharedPreferences.getString(ID_KEY, "")
         set(value) = sharedPreferences.edit().putString(ID_KEY, value).apply()
 
-    var name: String
+    var username: String
         get() = sharedPreferences.getString(NAME_KEY, "")
         set(value) = sharedPreferences.edit().putString(NAME_KEY, value).apply()
 }

@@ -68,7 +68,7 @@ class StartupActivity : BaseActivity() {
                     Log.d(this.tag(), "User details response: $response")
                     val details = JsonParser().parse(response.toString()) as JsonObject
                     sharedPrefs.id = details["id"].asString
-                    sharedPrefs.name = details["display_name"].asString
+                    sharedPrefs.username = details["display_name"].asString
                     startActivity(Intent(this, LobbyListActivity::class.java))
                 },
                 Response.ErrorListener { error ->

@@ -132,7 +132,7 @@ class LobbyActivity : BaseActivity() {
 
     // Connect to the Sync Song server via websocket and initialise a message listener.
     private fun joinLobby() {
-        socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$lobbyID/join")) {
+        socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$lobbyID/join?username=${sharedPrefs.username}")) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection opened")
                 setConnectionStateWithReconnect(true)
