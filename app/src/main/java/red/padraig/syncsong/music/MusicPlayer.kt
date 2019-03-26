@@ -18,5 +18,5 @@ interface MusicPlayer {
 
     fun seekToRelativePosition(pos: Long)
 
-    fun getCurrentImage(callback: (Bitmap) -> Unit)
+    fun getCurrentImage(callback: (Bitmap?) -> Unit)
 }

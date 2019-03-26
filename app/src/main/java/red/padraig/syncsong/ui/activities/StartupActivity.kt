@@ -73,7 +73,7 @@ class StartupActivity : BaseActivity() {
                 },
                 Response.ErrorListener { error ->
                     Log.e(this.tag(), "Error getting user details: ${error.printableError()}")
-                    Toast.makeText(this, "Unable to get user details", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Unable to get user details: ${error.printableError()}", Toast.LENGTH_LONG).show()
                 }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()

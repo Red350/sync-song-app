@@ -96,9 +96,13 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
     }
 
     // Makes an async call to the spotify remote api, and returns that image through the provided callback.
-    override fun getCurrentImage(callback: (Bitmap) -> Unit) {
-        imagesApi.getImage(currentTrack.imageUri).setResultCallback {
-            callback(it)
+    override fun getCurrentImage(callback: (Bitmap?) -> Unit) {
+        if (currentTrack.imageUri != null) {
+            imagesApi.getImage(currentTrack.imageUri).setResultCallback {
+                callback(it)
+            }
+        } else {
+            callback(null)
         }
     }
 }

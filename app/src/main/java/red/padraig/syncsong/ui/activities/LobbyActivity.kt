@@ -172,7 +172,7 @@ class LobbyActivity : BaseActivity() {
 
     // Display details of the song currently playing.
     private fun setCurrentlyPlayingUI(track: MyTrack) {
-        this.runOnUiThread {
+        runOnUiThread {
             rowtrack_tv_name.text = track.name
             rowtrack_tv_artist.text = track.artist
 
@@ -185,8 +185,14 @@ class LobbyActivity : BaseActivity() {
         musicPlayer.getCurrentImage { setTrackImage(it) }
     }
 
-    private fun setTrackImage(image: Bitmap) {
-        rowtrack_iv_artwork.setImageBitmap(image)
+    private fun setTrackImage(image: Bitmap?) {
+        runOnUiThread {
+            if (image == null) {
+                rowtrack_iv_artwork.setImageDrawable(getDrawable(R.drawable.ic_broken_image_black_64dp))
+            } else {
+                rowtrack_iv_artwork.setImageBitmap(image)
+            }
+        }
     }
 
     // Hides or shows the song queue UI.
@@ -236,7 +242,7 @@ class LobbyActivity : BaseActivity() {
 
     // Displays the connection state, an attempts to reconnect to the server if disconnected.
     private fun setConnectionStateWithReconnect(connected: Boolean) {
-        this.runOnUiThread {
+        runOnUiThread {
             lobby_btn_send.isEnabled = connected
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
             if (!connected) joinLobby()
@@ -244,7 +250,7 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun displayMessage(msg: String) {
-        this.runOnUiThread { lobby_tv_messages.append(msg + "\n") }
+        runOnUiThread { lobby_tv_messages.append(msg + "\n") }
     }
 
     private fun parseMessage(msg: String) {
