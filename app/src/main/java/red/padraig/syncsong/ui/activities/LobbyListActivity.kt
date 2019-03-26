@@ -27,16 +27,21 @@ class LobbyListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby_list)
 
+        initListeners()
+
         initialiseActionBar("Lobbies")
 
-        lobbylist_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
 
-        // Display the refresh icon immediately.
-        lobbylist_SRL_lobbies.isRefreshing = true
+    }
+
+    private fun initListeners() {
+        // Go to create lobby page on click.
+        lobbylist_btn_createlobby.setOnClickListener { startActivity(Intent(this, CreateLobbyActivity::class.java)) }
 
         // Initialise lobby list view.
         lobbyAdapter = LobbyAdapter(this, lobbyList)
         lobbylist_lv_lobbies.adapter = lobbyAdapter
+        // Join lobby on click row.
         lobbylist_lv_lobbies.setOnItemClickListener { _, _, i, _ ->
             joinLobby(lobbyList[i].id, lobbyList[i].name)
         }
@@ -50,7 +55,7 @@ class LobbyListActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        getLobbies()
+        refreshLobbies()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -99,6 +104,7 @@ class LobbyListActivity : BaseActivity() {
     }
 
     private fun refreshLobbies() {
+        lobbylist_SRL_lobbies.isRefreshing = true
         lobbyList.clear()
         lobbyAdapter.notifyDataSetChanged()
         getLobbies()
