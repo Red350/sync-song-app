@@ -1,9 +1,8 @@
 package red.padraig.syncsong
 
-import android.app.Activity
 import com.android.volley.VolleyError
 
-fun Activity.tag(): String = this::class.java.simpleName
+fun Any.tag(): String = this::class.java.simpleName
 
 fun String.escapeSpecialCharacters(): String =
         this.replace(Regex("""\\"""), Regex.escapeReplacement("""\\"""))

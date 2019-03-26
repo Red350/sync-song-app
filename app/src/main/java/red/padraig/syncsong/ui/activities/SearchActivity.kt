@@ -18,7 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_search.*
 import red.padraig.syncsong.R
-import red.padraig.syncsong.data.Track
+import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.TrackAdapter
@@ -27,7 +27,7 @@ import kotlin.collections.HashMap
 
 class SearchActivity : BaseActivity() {
 
-    private val trackList = mutableListOf<Track>()
+    private val trackList = mutableListOf<MyTrack>()
     private lateinit var trackAdapter: TrackAdapter
     private var searchDelayTimer = Timer()
     private var lastSearch = ""
@@ -52,7 +52,9 @@ class SearchActivity : BaseActivity() {
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
             // Return the selected track to the Lobby activity.
             val returnIntent = Intent()
-            returnIntent.putExtra("track", trackList[i])
+            returnIntent.putExtra("TRACK_URI", trackList[i].uri)
+            returnIntent.putExtra("TRACK_NAME", trackList[i].name)
+            returnIntent.putExtra("TRACK_ARTIST", trackList[i].artist)
             setResult(Activity.RESULT_OK, returnIntent)
             hideKeyboard()  // Otherwise keyboard will remain visible on lobby screen.
             finish()
@@ -109,7 +111,7 @@ class SearchActivity : BaseActivity() {
         if (searchQuery == lastSearch) return
         lastSearch = searchQuery
         val searchUrl = "$baseUrl&q=$searchQuery"
-        val tempTrackList = mutableListOf<Track>()
+        val tempTrackList = mutableListOf<MyTrack>()
         val jsonObjectRequest = object : JsonObjectRequest(Request.Method.GET,
                 searchUrl, null,
                 Response.Listener { response ->
@@ -132,7 +134,7 @@ class SearchActivity : BaseActivity() {
                         val images = it.asJsonObject["album"].asJsonObject["images"].asJsonArray
                         // We should still add a track without album art.
                         if (images.size() == 0) {
-                            addTrack(tempTrackList, Track(uri, name, artists, null))
+                            addTrack(tempTrackList, MyTrack(uri, name, artists, null,null))
                             return@forEach  // Don't send an image request.
                         }
                         // Images are stored in descending order of size, we're looking for the second largest (300x300 px).
@@ -148,7 +150,7 @@ class SearchActivity : BaseActivity() {
                                 imageUrl,
                                 Response.Listener<Bitmap> { artwork ->
                                     Log.d(this@SearchActivity.tag(), "Received artwork response: $imageUrl")
-                                    addTrack(tempTrackList, Track(uri, name, artists, artwork))
+                                    addTrack(tempTrackList, MyTrack(uri, name, artists, null, artwork))
                                 },
                                 0,
                                 0,
@@ -157,7 +159,7 @@ class SearchActivity : BaseActivity() {
                                 Response.ErrorListener { error ->
                                     Log.e(this@SearchActivity.tag(), "Failed to get album art: ${error.printableError()}")
                                     // We should still display a track even if the album art doesn't load.
-                                    addTrack(tempTrackList, Track(uri, name, artists, null))
+                                    addTrack(tempTrackList, MyTrack(uri, name, artists, null, null))
                                 }
                         ))
                     }
@@ -181,7 +183,7 @@ class SearchActivity : BaseActivity() {
     // TODO look into whether calling this multiple times can cause issues. Seems fine currently.
     // An alternate solution would be to keep track of the number of requests sent vs responses received, and trigger after all responses received.
     // Volley might also have some support for batch requests such as this.
-    private fun addTrack(tempTrackList: MutableList<Track>, track: Track) {
+    private fun addTrack(tempTrackList: MutableList<MyTrack>, track: MyTrack) {
         tempTrackList.add(track)
         // This isn't the neatest solution, but previously when I was editing the trackList directly,
         // there was a race condition that could result in the adapter trying to access outside of the array.

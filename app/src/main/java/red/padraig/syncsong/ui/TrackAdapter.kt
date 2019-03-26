@@ -8,10 +8,10 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import red.padraig.syncsong.R
-import red.padraig.syncsong.data.Track
+import red.padraig.syncsong.data.MyTrack
 
 // Adapter for displaying track information in a list view.
-class TrackAdapter(val context: Context, private val data: List<Track>): BaseAdapter() {
+class TrackAdapter(val context: Context, private val data: List<MyTrack>): BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 

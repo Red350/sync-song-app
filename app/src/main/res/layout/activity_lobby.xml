@@ -16,7 +16,6 @@
 
         <include layout="@layout/row_track" />
 
-
         <Button
             android:id="@+id/lobby_btn_playpause"
             android:layout_width="wrap_content"

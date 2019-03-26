@@ -4,6 +4,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ExtensionsKtTest {
+
+    @Test
+    fun testTag() = assertEquals("String", "this is a string object".tag())
+
     @Test
     fun testEscapeSpecialCharactersBackslash() = assertEquals("""\\Tes\\t\\""", """\Tes\t\""".escapeSpecialCharacters())
 
