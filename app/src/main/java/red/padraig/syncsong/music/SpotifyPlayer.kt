@@ -45,7 +45,10 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
                             val track = it.track
                             if (track != null) {
                                 GlobalScope.launch {
-                                    currentTrack = MyTrack(track.uri, track.name, track.artist.name, track.imageUri, null)
+                                    if (track.name == null) {
+                                        Log.e(this.tag(), "Track name is null: $track, ${track.uri}")
+                                    }
+                                    currentTrack = MyTrack(track.uri ?: "", track.name ?: "", track.artist.name ?: "", track.imageUri, null)
                                     trackState.send(currentTrack)
                                 }
                             }
