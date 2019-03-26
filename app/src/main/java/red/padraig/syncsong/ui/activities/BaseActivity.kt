@@ -40,7 +40,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun hideKeyboard() {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
     fun initialiseActionBar(title: String) {

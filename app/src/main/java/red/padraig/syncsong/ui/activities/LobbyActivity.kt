@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_lobby.*
 import kotlinx.android.synthetic.main.row_track.*
 import kotlinx.coroutines.GlobalScope
@@ -23,8 +24,8 @@ import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
+import red.padraig.syncsong.network.Message
 import red.padraig.syncsong.tag
-import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 
 class LobbyActivity : BaseActivity() {
@@ -108,6 +109,7 @@ class LobbyActivity : BaseActivity() {
                     data.getStringExtra("TRACK_URI"),
                     data.getStringExtra("TRACK_NAME"),
                     data.getStringExtra("TRACK_ARTIST"),
+                    -1,
                     null,
                     null
             )
@@ -132,10 +134,12 @@ class LobbyActivity : BaseActivity() {
 
     // Connect to the Sync Song server via websocket and initialise a message listener.
     private fun joinLobby() {
-        socket = object : WebSocketClient(URI("http://padraig.red:8080/lobbies/$lobbyID/join?username=${sharedPrefs.username}")) {
+        val lobbyURI = "http://padraig.red:8080/lobbies/$lobbyID/join?username=${sharedPrefs.username}"
+        Log.d(this.tag(), "Connecting to lobby: $lobbyURI")
+        socket = object : WebSocketClient(URI(lobbyURI)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection opened")
-                setConnectionStateWithReconnect(true)
+                setConnectionState(true)
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -146,13 +150,16 @@ class LobbyActivity : BaseActivity() {
                         Toast.makeText(this@LobbyActivity, "Lobby does not exist", Toast.LENGTH_SHORT).show()
                         finish()
                     }
+                } else {
+                    setConnectionState(false)
                 }
-                setConnectionStateWithReconnect(false)
             }
 
-            override fun onMessage(message: String?) {
-                Log.d(this@LobbyActivity.tag(), "Message received: $message")
-                parseMessage(message.toString())
+            override fun onMessage(jsonMessage: String?) {
+                Log.d(this@LobbyActivity.tag(), "Message received: $jsonMessage")
+                // The message is converted into a Message object before parsing.
+                val message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
+                parseMessage(message)
             }
 
             override fun onError(ex: Exception?) {
@@ -241,29 +248,30 @@ class LobbyActivity : BaseActivity() {
     }
 
     // Displays the connection state, an attempts to reconnect to the server if disconnected.
-    private fun setConnectionStateWithReconnect(connected: Boolean) {
+    private fun setConnectionState(connected: Boolean) {
         runOnUiThread {
             lobby_btn_send.isEnabled = connected
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
-            if (!connected) joinLobby()
         }
     }
 
-    private fun displayMessage(msg: String) {
-        runOnUiThread { lobby_tv_messages.append(msg + "\n") }
+    private fun displayMessage(msg: Message) {
+        // TODO unescape special characters
+        runOnUiThread { lobby_tv_messages.append(msg.toString() + "\n") }
     }
 
-    private fun parseMessage(msg: String) {
-        when {
-            msg.contains("{command: play}") -> play(currentTrack.uri)
-            msg.contains("{command: pause}") -> pause()
-            titleRegex.containsMatchIn(msg) -> {
-                // TODO stop server from sending this message.
-                // Pass for now, since we get name from the intent.
-                // setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
-            }
-            else -> displayMessage(msg.unescapeSpecialCharacters())
-        }
+    private fun parseMessage(msg: Message) {
+        displayMessage(msg)
+//        when {
+//            msg.contains("{command: play}") -> play(currentTrack.uri)
+//            msg.contains("{command: pause}") -> pause()
+//            titleRegex.containsMatchIn(msg) -> {
+//                // TODO stop server from sending this message.
+//                // Pass for now, since we get name from the intent.
+//                // setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
+//            }
+//            else -> displayMessage(msg.unescapeSpecialCharacters())
+//        }
     }
 
     private fun sendMessage(msg: String) {
