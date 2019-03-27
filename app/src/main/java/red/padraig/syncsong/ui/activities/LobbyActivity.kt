@@ -26,6 +26,7 @@ import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
 import red.padraig.syncsong.network.Message
 import red.padraig.syncsong.tag
+import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 
 class LobbyActivity : BaseActivity() {
@@ -67,7 +68,7 @@ class LobbyActivity : BaseActivity() {
 
     private fun initListeners() {
         lobby_btn_send.setOnClickListener {
-            sendMessage(lobby_et_message.text.toString())
+            sendUserMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
         }
 
@@ -158,7 +159,7 @@ class LobbyActivity : BaseActivity() {
             override fun onMessage(jsonMessage: String?) {
                 Log.d(this@LobbyActivity.tag(), "Message received: $jsonMessage")
                 // The message is converted into a Message object before parsing.
-                val message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
+                val message = unmarshal(jsonMessage)
                 parseMessage(message)
             }
 
@@ -255,13 +256,14 @@ class LobbyActivity : BaseActivity() {
         }
     }
 
-    private fun displayMessage(msg: Message) {
-        // TODO unescape special characters
-        runOnUiThread { lobby_tv_messages.append(msg.toString() + "\n") }
+    private fun displayUserMessage(msg: Message) {
+        runOnUiThread { lobby_tv_messages.append("${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}\n") }
     }
 
     private fun parseMessage(msg: Message) {
-        displayMessage(msg)
+        if (msg.userMsg != null) {
+            displayUserMessage(msg)
+        }
 //        when {
 //            msg.contains("{command: play}") -> play(currentTrack.uri)
 //            msg.contains("{command: pause}") -> pause()
@@ -274,7 +276,12 @@ class LobbyActivity : BaseActivity() {
 //        }
     }
 
-    private fun sendMessage(msg: String) {
-        socket.send(msg.escapeSpecialCharacters())
+    private fun marshal(msg: Message): String = Gson().toJson(msg)
+
+    private fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
+
+    private fun sendUserMessage(userMsg: String) {
+        val msg = Message(null, null, null, userMsg.escapeSpecialCharacters())
+        socket.send(marshal(msg))
     }
 }
