@@ -95,6 +95,16 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
         playerApi.seekToRelativePosition(pos)
     }
 
+    override fun skipNext() {
+        Log.d(this.tag(), "Skipping to next song")
+        playerApi.skipNext()
+    }
+
+    override fun queue(uri: String) {
+        Log.d(this.tag(), "Adding track to queue: $uri")
+        playerApi.queue(uri)
+    }
+
     // Makes an async call to the spotify remote api, and returns that image through the provided callback.
     override fun getCurrentImage(callback: (Bitmap?) -> Unit) {
         if (currentTrack.imageUri != null) {

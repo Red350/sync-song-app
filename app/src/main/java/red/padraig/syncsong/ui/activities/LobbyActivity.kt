@@ -83,6 +83,7 @@ class LobbyActivity : BaseActivity() {
             override fun afterTextChanged(s: Editable?) {
                 lobby_scroll_messages.scrollTo(0, lobby_scroll_messages.bottom)
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -160,7 +161,7 @@ class LobbyActivity : BaseActivity() {
                 Log.d(this@LobbyActivity.tag(), "Message received: $jsonMessage")
                 // The message is converted into a Message object before parsing.
                 val message = unmarshal(jsonMessage)
-                parseMessage(message)
+                processMessage(message)
             }
 
             override fun onError(ex: Exception?) {
@@ -172,7 +173,7 @@ class LobbyActivity : BaseActivity() {
 
     private fun subscribeToPlayerState() {
         GlobalScope.launch {
-            while(true) {
+            while (true) {
                 setCurrentlyPlayingUI(playerState.receive())
             }
         }
@@ -260,20 +261,55 @@ class LobbyActivity : BaseActivity() {
         runOnUiThread { lobby_tv_messages.append("${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}\n") }
     }
 
-    private fun parseMessage(msg: Message) {
+    // Look at which fields in the message are set and response appropriately.
+    private fun processMessage(msg: Message) {
+        // Display user message if set.
         if (msg.userMsg != null) {
             displayUserMessage(msg)
         }
-//        when {
-//            msg.contains("{command: play}") -> play(currentTrack.uri)
-//            msg.contains("{command: pause}") -> pause()
-//            titleRegex.containsMatchIn(msg) -> {
-//                // TODO stop server from sending this message.
-//                // Pass for now, since we get name from the intent.
-//                // setLobbyName(titleRegex.find(msg)?.groupValues?.get(1))
-//            }
-//            else -> displayMessage(msg.unescapeSpecialCharacters())
-//        }
+
+        // Execute command if set.
+        if (msg.command != null) {
+            // Distinguish between commands that require the track to be set in the message.
+            if (msg.currentTrack != null) {
+                when (msg.command) {
+                    "play" -> {
+                        musicPlayer.play(msg.currentTrack.uri)
+                        currentTrack = msg.currentTrack
+                        return
+                    }
+                    "seek_to" -> {
+                        musicPlayer.seekTo(msg.currentTrack.position)
+                        return
+                    }
+                    "seek_relative" -> {
+                        musicPlayer.seekToRelativePosition(msg.currentTrack.position)
+                        return
+                    }
+                    "queue" -> {
+                        musicPlayer.queue(msg.currentTrack.uri)
+                        return
+                    }
+                    else -> Unit
+                }
+            }
+
+            when (msg.command) {
+                "pause" -> {
+                    musicPlayer.pause()
+                    return
+                }
+                "resume" -> {
+                    musicPlayer.resume()
+                    return
+                }
+                "skip" -> {
+                    musicPlayer.skipNext()
+                    return
+                }
+                else -> Log.e(this.tag(), "Invalid command: ${msg.command}")
+            }
+        }
     }
 
     private fun marshal(msg: Message): String = Gson().toJson(msg)
