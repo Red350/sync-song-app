@@ -33,21 +33,20 @@ class LobbyActivity : BaseActivity() {
 
     companion object {
         const val SEARCH_REQUEST_CODE = 1
+        // This is static to prevent a user from connecting to multiple lobbies at once.
+        private var socket: WebSocketClient? = null
     }
 
     private lateinit var lobbyID: String
     private lateinit var lobbyName: String
 
     private val playerState = Channel<MyTrack>()
-    private lateinit var socket: WebSocketClient
     private lateinit var musicPlayer: MusicPlayer
 
     private var playing = false
     private lateinit var currentTrack: MyTrack
 
     private var queueOpen = false
-
-    private var titleRegex = Regex("""\{name: (.*)\}\"\}""")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +58,15 @@ class LobbyActivity : BaseActivity() {
         lobbyName = intent.getStringExtra("LOBBY_NAME")
         initialiseActionBar(lobbyName)
 
-        // Connect to Sync Song lobby server.
-        joinLobby()
+        // Connect to the lobby if we do not hold on open connection, or if the open connection is
+        // to a different lobby.
+        if (socket == null || socket?.isClosed == true || sharedPrefs.lobbyID != lobbyID) {
+            // Disconnect from the previous lobby if necessary.
+            // It does not cause any issues to call close() on an already closed socket.
+            socket?.close(CloseFrame.NORMAL, "User joining a new lobby")
+
+            joinLobby()
+        }
 
         // Create Spotify music player.
         musicPlayer = SpotifyPlayer(applicationContext, playerState)
@@ -141,11 +147,13 @@ class LobbyActivity : BaseActivity() {
         socket = object : WebSocketClient(URI(lobbyURI)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection opened")
+                sharedPrefs.lobbyID = lobbyID
                 setConnectionState(true)
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
                 Log.d(this@LobbyActivity.tag(), "Socket connection closed")
+                sharedPrefs.lobbyID = ""
                 if (code == CloseFrame.REFUSE) {
                     Log.d(this@LobbyActivity.tag(), "Lobby does not exist")
                     this@LobbyActivity.runOnUiThread {
@@ -168,7 +176,7 @@ class LobbyActivity : BaseActivity() {
                 Log.e(this@LobbyActivity.tag(), "Error: $ex")
             }
         }
-        socket.connect()
+        socket?.connect()
     }
 
     private fun subscribeToPlayerState() {
@@ -231,9 +239,9 @@ class LobbyActivity : BaseActivity() {
 
     private fun togglePlay() {
         if (playing) {
-            socket.send("{command: pause}")
+            socket?.send("{command: pause}")
         } else {
-            socket.send("{command: play}")
+            socket?.send("{command: play}")
         }
     }
 
@@ -318,6 +326,6 @@ class LobbyActivity : BaseActivity() {
 
     private fun sendUserMessage(userMsg: String) {
         val msg = Message(null, null, null, userMsg.escapeSpecialCharacters())
-        socket.send(marshal(msg))
+        socket?.send(marshal(msg))
     }
 }
