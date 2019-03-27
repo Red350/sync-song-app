@@ -7,7 +7,7 @@ sealed class ClientCommand(ordinal: Int): Command(ordinal) {
     object VoteSkip: ClientCommand(1)
 }
 
-sealed class ServerCommand(code: Int): Command(code) {
+sealed class ServerCommand(ordinal: Int): Command(ordinal) {
     object Play: ServerCommand(0)
     object Pause: ServerCommand(1)
     object Resume: ServerCommand(2)
