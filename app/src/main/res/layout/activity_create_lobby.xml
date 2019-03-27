@@ -36,6 +36,39 @@
             android:minWidth="200dp"
             android:singleLine="true" />
 
+        <RadioGroup
+            android:id="@+id/createlobby_rg_lobbymode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:minWidth="200dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/createlobby_rb_lobbymode_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:tag="ADMIN_CONTROLLED"
+                android:text="@string/lobbymode_admincontrolled" />
+
+            <RadioButton
+                android:id="@+id/createlobby_rb_lobbymode_roundrobin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="ROUND_ROBIN"
+                android:text="@string/lobbymode_roundrobin" />
+
+            <RadioButton
+                android:id="@+id/createlobby_rb_lobbymode_freeforall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="FREE_FOR_ALL"
+                android:text="@string/lobbymode_freeforall" />
+
+        </RadioGroup>
+
         <Spinner
             android:id="@+id/createlobby_spin_genre"
             android:layout_width="wrap_content"

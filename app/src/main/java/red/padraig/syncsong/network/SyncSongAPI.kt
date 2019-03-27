@@ -12,6 +12,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
+import red.padraig.syncsong.data.LobbyMode
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
 
@@ -50,7 +51,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
         volleyQueue.add(jsonObjectRequest)
     }
 
-    fun createLobby(name: String, genre: String, public: Boolean, admin: String, responseListener: Response.Listener<String>) {
+    fun createLobby(name: String, mode: LobbyMode, genre: String, public: Boolean, admin: String, responseListener: Response.Listener<String>) {
         val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_createlobby)
 
         Log.d(this.tag(), "Sending create lobby request: $url")
@@ -65,6 +66,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
             override fun getParams(): Map<String, String> {
                 val params = HashMap<String, String>()
                 params["name"] = name
+                params["mode"] = mode.ordinal.toString()
                 params["genre"] = genre
                 params["public"] = public.toString()
                 params["admin"] = admin
