@@ -50,7 +50,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
         volleyQueue.add(jsonObjectRequest)
     }
 
-    fun createLobby(name: String, genre: String, public: Boolean, responseListener: Response.Listener<String>) {
+    fun createLobby(name: String, genre: String, public: Boolean, admin: String, responseListener: Response.Listener<String>) {
         val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_createlobby)
 
         Log.d(this.tag(), "Sending create lobby request: $url")
@@ -67,6 +67,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
                 params["name"] = name
                 params["genre"] = genre
                 params["public"] = public.toString()
+                params["admin"] = admin
 
                 return params
             }

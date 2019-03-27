@@ -26,6 +26,7 @@ class CreateLobbyActivity : BaseActivity() {
                     createlobby_et_name.text.toString(),
                     createlobby_spin_genre.selectedItem.toString(),
                     createlobby_rg_pub.isChecked,
+                    sharedPrefs.username,
                     Response.Listener { response ->
                         Log.d(this.tag(), "Create lobby response: $response")
                         Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
