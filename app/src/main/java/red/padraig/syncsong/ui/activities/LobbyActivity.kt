@@ -71,8 +71,10 @@ class LobbyActivity : BaseActivity() {
             joinLobby()
         }
 
-        // Create Spotify music player.
+        // Create and connect to Spotify music player.
         musicPlayer = SpotifyPlayer(applicationContext, playerState)
+        musicPlayer.connect()
+        subscribeToPlayerState()
     }
 
     private fun initListeners() {
@@ -100,14 +102,8 @@ class LobbyActivity : BaseActivity() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-        musicPlayer.connect()
-        subscribeToPlayerState()
-    }
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         musicPlayer.disconnect()
     }
 
@@ -127,7 +123,7 @@ class LobbyActivity : BaseActivity() {
                     null
             )
 
-            sendMessage(Message(null, searchTrack, ClientCommand.AddSong.ordinal, null))
+            sendMessage(Message(null, searchTrack, null, ClientCommand.AddSong.ordinal, null))
         }
 
         // TODO this shouldn't be in the final app, but for now this seems like the best place to enable it.
@@ -219,6 +215,10 @@ class LobbyActivity : BaseActivity() {
         }
     }
 
+    private fun updateTrackQueueUI(tracks: Array<MyTrack>) {
+        // TODO implement
+    }
+
     // Hides or shows the song queue UI.
     private fun toggleDisplaySongQueue() {
         if (queueOpen) {
@@ -302,10 +302,6 @@ class LobbyActivity : BaseActivity() {
                         musicPlayer.seekToRelativePosition(msg.track.position)
                         return
                     }
-                    ServerCommand.Queue -> {
-                        musicPlayer.queue(msg.track.uri)
-                        return
-                    }
                     else -> Unit
                 }
             }
@@ -323,6 +319,16 @@ class LobbyActivity : BaseActivity() {
                     musicPlayer.skipNext()
                     return
                 }
+                ServerCommand.Queue -> {
+                    if (msg.trackQueue == null) return
+                    updateTrackQueueUI(msg.trackQueue)
+
+                    // Add first song of track to queue.
+                    if (!msg.trackQueue.isEmpty()) {
+                        musicPlayer.queue(msg.trackQueue[0].uri)
+                    }
+                    return
+                }
                 else -> Log.e(this.tag(), "Invalid command: ${msg.command}")
             }
         }
@@ -333,11 +339,12 @@ class LobbyActivity : BaseActivity() {
     private fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
 
     private fun voteSkip() {
-        sendMessage(Message(null, null, ClientCommand.VoteSkip.ordinal, null))
+        sendMessage(Message(null, null, null, ClientCommand.VoteSkip.ordinal, null))
+        toastShort("Vote cast")
     }
 
     private fun sendUserMessage(userMsg: String) {
-        sendMessage(Message(null, null, null, userMsg.escapeSpecialCharacters()))
+        sendMessage(Message(null, null, null, null, userMsg.escapeSpecialCharacters()))
     }
 
     // Adds the username to the message and sends it.

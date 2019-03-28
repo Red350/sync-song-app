@@ -6,6 +6,7 @@ import red.padraig.syncsong.data.MyTrack
 data class Message(
         @SerializedName("username") var username: String?,
         @SerializedName("currentTrack") val track: MyTrack?,
+        @SerializedName("trackQueue") val trackQueue: Array<MyTrack>?,
         @SerializedName("command") val command: Int?,
         @SerializedName("userMsg") val userMsg: String?
 )

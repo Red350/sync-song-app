@@ -17,8 +17,6 @@ sealed class ServerCommand(ordinal: Int) : Command(ordinal) {
     object SeekTo : ServerCommand(5)
     object SeekRelative : ServerCommand(6)
     object Queue : ServerCommand(7)
-
-
 }
 
 fun getServerCommandByOrdinal(ordinal: Int): ServerCommand {

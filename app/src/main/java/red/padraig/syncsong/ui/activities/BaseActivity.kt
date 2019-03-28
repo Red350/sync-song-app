@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import com.android.volley.RequestQueue
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.android.synthetic.main.common_toolbar.*
@@ -46,5 +47,13 @@ abstract class BaseActivity : AppCompatActivity() {
     fun initialiseActionBar(title: String) {
         setSupportActionBar(common_toolbar)
         supportActionBar?.title = title
+    }
+
+    fun toastLong(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+    }
+
+    fun toastShort(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }
