@@ -7,7 +7,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_lobby_list.*
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
-import red.padraig.syncsong.ui.LobbyAdapter
+import red.padraig.syncsong.ui.adapater.LobbyAdapter
 
 class LobbyListActivity : BaseActivity() {
 

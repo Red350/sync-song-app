@@ -15,4 +15,10 @@ fun String.unescapeSpecialCharacters(): String =
                 .replace(Regex("""\\\}"""), Regex.escapeReplacement("""}"""))
 
 // Convenience function for printing volley errors.
-fun VolleyError.printableError(): String = String(this.networkResponse.data)
+fun VolleyError.printableError(): String {
+    return if (this.networkResponse.data != null) {
+        String(this.networkResponse.data)
+    } else {
+        this::class.simpleName.toString()
+    }
+}

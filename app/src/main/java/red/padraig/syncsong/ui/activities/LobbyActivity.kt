@@ -120,6 +120,7 @@ class LobbyActivity : BaseActivity() {
                     data.getStringExtra("TRACK_NAME"),
                     data.getStringExtra("TRACK_ARTIST"),
                     -1,
+                    sharedPrefs.username,
                     null,
                     null
             )
@@ -218,26 +219,38 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun updateTrackQueueUI(tracks: Array<MyTrack>) {
-        // TODO implement
+        val builder = StringBuilder()
+        tracks.map { track ->
+            "${track.name} - ${track.artist} (added by ${track.username}\n)"
+        }.forEach {
+            builder.append(it)
+        }
+
+        // Remove trailing newline.
+        builder.removeSuffix("\n")
+
+        runOnUiThread {
+            lobby_tv_queue.text = builder.toString()
+        }
     }
 
     // Hides or shows the song queue UI.
     private fun toggleDisplaySongQueue() {
         if (queueOpen) {
             // Closing the queue.
-            lobby_queue.visibility = View.VISIBLE
-            lobby_queue.alpha = 1.0f
-            lobby_queue.animate().alpha(0.0f).withEndAction {
-                lobby_queue.visibility = View.GONE
+            lobby_tv_queue.visibility = View.VISIBLE
+            lobby_tv_queue.alpha = 1.0f
+            lobby_tv_queue.animate().alpha(0.0f).withEndAction {
+                lobby_tv_queue.visibility = View.GONE
             }
 
             // Rotate the chevron.
             lobby_iv_queuechevron.animate().rotation(0.0f)
         } else {
             // Opening the queue.
-            lobby_queue.visibility = View.VISIBLE
-            lobby_queue.alpha = 0.0f
-            lobby_queue.animate().alpha(1.0f)
+            lobby_tv_queue.visibility = View.VISIBLE
+            lobby_tv_queue.alpha = 0.0f
+            lobby_tv_queue.animate().alpha(1.0f)
 
             // Rotate the chevron.
             lobby_iv_queuechevron.animate().rotation(180.0f)

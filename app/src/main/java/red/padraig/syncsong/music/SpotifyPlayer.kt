@@ -48,7 +48,7 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
                                     if (track.name == null) {
                                         Log.e(this.tag(), "Track name is null: $track, ${track.uri}")
                                     }
-                                    currentTrack = MyTrack(track.uri ?: "", track.name ?: "", track.artist.name ?: "", -1, track.imageUri, null)
+                                    currentTrack = MyTrack(track.uri ?: "", track.name ?: "", track.artist.name ?: "", -1, "", track.imageUri, null)
                                     trackState.send(currentTrack)
                                 }
                             }

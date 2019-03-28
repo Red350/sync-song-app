@@ -21,7 +21,7 @@ import red.padraig.syncsong.R
 import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
-import red.padraig.syncsong.ui.TrackAdapter
+import red.padraig.syncsong.ui.adapater.TrackAdapter
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -133,7 +133,7 @@ class SearchActivity : BaseActivity() {
                         val images = it.asJsonObject["album"].asJsonObject["images"].asJsonArray
                         // We should still add a track without album art.
                         if (images.size() == 0) {
-                            addTrack(tempTrackList, MyTrack(uri, name, artists, -1, null,null))
+                            addTrack(tempTrackList, MyTrack(uri, name, artists, -1, "", null,null))
                             return@forEach  // Don't send an image request.
                         }
                         // Images are stored in descending order of size, we're looking for the second largest (300x300 px).
@@ -149,7 +149,7 @@ class SearchActivity : BaseActivity() {
                                 imageUrl,
                                 Response.Listener<Bitmap> { artwork ->
                                     Log.d(this@SearchActivity.tag(), "Received artwork response: $imageUrl")
-                                    addTrack(tempTrackList, MyTrack(uri, name, artists, -1, null, artwork))
+                                    addTrack(tempTrackList, MyTrack(uri, name, artists, -1, "", null, artwork))
                                 },
                                 0,
                                 0,
@@ -158,7 +158,7 @@ class SearchActivity : BaseActivity() {
                                 Response.ErrorListener { error ->
                                     Log.e(this@SearchActivity.tag(), "Failed to get album art: ${error.printableError()}")
                                     // We should still display a track even if the album art doesn't load.
-                                    addTrack(tempTrackList, MyTrack(uri, name, artists, -1, null, null))
+                                    addTrack(tempTrackList, MyTrack(uri, name, artists, -1, "", null, null))
                                 }
                         ))
                     }

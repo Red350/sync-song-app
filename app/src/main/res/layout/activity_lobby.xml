@@ -73,13 +73,14 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/lobby_queue"
+            android:id="@+id/lobby_tv_queue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/lobby_LL_queuetitle"
-            android:visibility="gone"
             android:text="Song 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\n"
-            tools:layout_height="wrap_content" />
+            android:visibility="gone"
+            tools:layout_height="wrap_content"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 
@@ -102,8 +103,8 @@
             android:id="@+id/lobby_tv_messages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:visibility="visible"
-            tools:text="User 1: Hello\nUser 2: Hi" />
+            tools:text="User 1: Hello\nUser 2: Hi"
+            tools:visibility="visible" />
 
     </ScrollView>
 

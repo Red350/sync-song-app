@@ -12,6 +12,8 @@ data class MyTrack(
         @SerializedName("artist") val artist: String,
         // Current position of the track in millis. -1 indicates this field should be ignored.
         @SerializedName("position") val position: Long,
+        // User who chose this track.
+        @SerializedName("username") var username: String,
         @Transient val imageUri: ImageUri?,
         @Transient val artwork: Bitmap?
 )
