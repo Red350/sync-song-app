@@ -29,6 +29,7 @@ import red.padraig.syncsong.network.Message
 import red.padraig.syncsong.network.ServerCommand
 import red.padraig.syncsong.network.getServerCommandByOrdinal
 import red.padraig.syncsong.tag
+import red.padraig.syncsong.ui.adapater.QueueAdapter
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 import java.net.URLEncoder
@@ -51,6 +52,8 @@ class LobbyActivity : BaseActivity() {
     private lateinit var currentTrack: MyTrack
 
     private var queueOpen = false
+    private val queueList = mutableListOf<MyTrack>()
+    private lateinit var queueAdapter: QueueAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +82,9 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun initListeners() {
+        queueAdapter = QueueAdapter(this, queueList)
+        lobby_lv_queue.adapter = queueAdapter
+
         lobby_btn_send.setOnClickListener {
             sendUserMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
@@ -158,7 +164,7 @@ class LobbyActivity : BaseActivity() {
             }
 
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                Log.d(this@LobbyActivity.tag(), "Socket connection closed")
+                Log.e(this@LobbyActivity.tag(), "Socket connection closed by${if (remote) " host" else " client"}: $code: $reason")
                 sharedPrefs.lobbyID = ""
                 if (code == CloseFrame.REFUSE) {
                     Log.d(this@LobbyActivity.tag(), "Lobby does not exist")
@@ -218,19 +224,13 @@ class LobbyActivity : BaseActivity() {
         }
     }
 
-    private fun updateTrackQueueUI(tracks: Array<MyTrack>) {
-        val builder = StringBuilder()
-        tracks.map { track ->
-            "${track.name} - ${track.artist} (added by ${track.username}\n)"
-        }.forEach {
-            builder.append(it)
-        }
-
-        // Remove trailing newline.
-        builder.removeSuffix("\n")
-
+    private fun updateTrackQueueUI(tracks: Array<MyTrack>?) {
+        // Since the queue is sent with every message, a null queue is considered empty.
+        queueList.clear()
+        if (tracks == null) return
+        queueList.addAll(tracks)
         runOnUiThread {
-            lobby_tv_queue.text = builder.toString()
+            queueAdapter.notifyDataSetChanged()
         }
     }
 
@@ -238,19 +238,19 @@ class LobbyActivity : BaseActivity() {
     private fun toggleDisplaySongQueue() {
         if (queueOpen) {
             // Closing the queue.
-            lobby_tv_queue.visibility = View.VISIBLE
-            lobby_tv_queue.alpha = 1.0f
-            lobby_tv_queue.animate().alpha(0.0f).withEndAction {
-                lobby_tv_queue.visibility = View.GONE
+            lobby_lv_queue.visibility = View.VISIBLE
+            lobby_lv_queue.alpha = 1.0f
+            lobby_lv_queue.animate().alpha(0.0f).withEndAction {
+                lobby_lv_queue.visibility = View.GONE
             }
 
             // Rotate the chevron.
             lobby_iv_queuechevron.animate().rotation(0.0f)
         } else {
             // Opening the queue.
-            lobby_tv_queue.visibility = View.VISIBLE
-            lobby_tv_queue.alpha = 0.0f
-            lobby_tv_queue.animate().alpha(1.0f)
+            lobby_lv_queue.visibility = View.VISIBLE
+            lobby_lv_queue.alpha = 0.0f
+            lobby_lv_queue.animate().alpha(1.0f)
 
             // Rotate the chevron.
             lobby_iv_queuechevron.animate().rotation(180.0f)
@@ -298,6 +298,9 @@ class LobbyActivity : BaseActivity() {
             displayUserMessage(msg)
         }
 
+        // Update the queue.
+        updateTrackQueueUI(msg.trackQueue)
+
         // Execute command if set.
         if (msg.command != null) {
             val command = getServerCommandByOrdinal(msg.command)
@@ -305,6 +308,11 @@ class LobbyActivity : BaseActivity() {
             if (msg.track != null) {
                 when (command) {
                     ServerCommand.Play -> {
+                        musicPlayer.play(msg.track.uri)
+                        currentTrack = msg.track
+                        return
+                    }
+                    ServerCommand.Skip -> {
                         musicPlayer.play(msg.track.uri)
                         currentTrack = msg.track
                         return
@@ -319,6 +327,7 @@ class LobbyActivity : BaseActivity() {
                     }
                     else -> Unit
                 }
+
             }
 
             when (command) {
@@ -330,15 +339,11 @@ class LobbyActivity : BaseActivity() {
                     musicPlayer.resume()
                     return
                 }
-                ServerCommand.Skip -> {
-                    musicPlayer.skipNext()
-                    return
-                }
                 ServerCommand.Queue -> {
                     if (msg.trackQueue == null) return
                     updateTrackQueueUI(msg.trackQueue)
 
-                    // Add first song of track to queue.
+                    // Add first track to the queue.
                     if (!msg.trackQueue.isEmpty()) {
                         musicPlayer.queue(msg.trackQueue[0].uri)
                     }

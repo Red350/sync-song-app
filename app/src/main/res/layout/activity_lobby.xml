@@ -72,15 +72,21 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/lobby_tv_queue"
+        <ListView
+            android:id="@+id/lobby_lv_queue"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_below="@id/lobby_LL_queuetitle"
-            android:text="Song 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\n"
-            android:visibility="gone"
-            tools:layout_height="wrap_content"
-            tools:visibility="visible" />
+            android:visibility="gone" />
+
+        <!--<TextView-->
+        <!--android:id="@+id/lobby_tv_queue"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/lobby_LL_queuetitle"-->
+        <!--android:visibility="gone"-->
+        <!--tools:text="Song 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\nSong 1 - Artist 1\n"-->
+        <!--tools:visibility="visible" />-->
 
     </RelativeLayout>
 
