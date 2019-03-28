@@ -279,23 +279,23 @@ class LobbyActivity : BaseActivity() {
         // Execute command if set.
         if (msg.command != null) {
             // Distinguish between commands that require the track to be set in the message.
-            if (msg.currentTrack != null) {
+            if (msg.track != null) {
                 when (msg.command) {
                     "play" -> {
-                        musicPlayer.play(msg.currentTrack.uri)
-                        currentTrack = msg.currentTrack
+                        musicPlayer.play(msg.track.uri)
+                        currentTrack = msg.track
                         return
                     }
                     "seek_to" -> {
-                        musicPlayer.seekTo(msg.currentTrack.position)
+                        musicPlayer.seekTo(msg.track.position)
                         return
                     }
                     "seek_relative" -> {
-                        musicPlayer.seekToRelativePosition(msg.currentTrack.position)
+                        musicPlayer.seekToRelativePosition(msg.track.position)
                         return
                     }
                     "queue" -> {
-                        musicPlayer.queue(msg.currentTrack.uri)
+                        musicPlayer.queue(msg.track.uri)
                         return
                     }
                     else -> Unit
