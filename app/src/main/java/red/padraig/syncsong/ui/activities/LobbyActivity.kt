@@ -83,6 +83,8 @@ class LobbyActivity : BaseActivity() {
 
         lobby_btn_playpause.setOnClickListener { togglePlay() }
 
+        lobby_btn_voteskip.setOnClickListener { voteSkip() }
+
         lobby_LL_queuetitle.setOnClickListener { toggleDisplaySongQueue() }
 
         // Automatically scroll message view to show new messages.
@@ -330,14 +332,18 @@ class LobbyActivity : BaseActivity() {
 
     private fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
 
+    private fun voteSkip() {
+        sendMessage(Message(null, null, ClientCommand.VoteSkip.ordinal, null))
+    }
+
     private fun sendUserMessage(userMsg: String) {
-        val msg = Message(null, null, null, userMsg.escapeSpecialCharacters())
-        sendMessage(msg)
+        sendMessage(Message(null, null, null, userMsg.escapeSpecialCharacters()))
     }
 
     // Adds the username to the message and sends it.
     private fun sendMessage(msg: Message) {
         msg.username = sharedPrefs.username
+        Log.d(this.tag(), "Sending message: $msg")
         socket?.send(marshal(msg))
     }
 }

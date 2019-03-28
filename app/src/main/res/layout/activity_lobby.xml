@@ -30,7 +30,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/row_track"
             android:layout_toEndOf="@id/lobby_btn_playpause"
-            android:enabled="false"
             android:text="Vote to skip" />
 
     </RelativeLayout>
