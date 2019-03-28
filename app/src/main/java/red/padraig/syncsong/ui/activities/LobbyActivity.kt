@@ -31,6 +31,7 @@ import red.padraig.syncsong.network.getServerCommandByOrdinal
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
+import java.net.URLEncoder
 
 class LobbyActivity : BaseActivity() {
 
@@ -145,7 +146,8 @@ class LobbyActivity : BaseActivity() {
 
     // Connect to the Sync Song server via websocket and initialise a message listener.
     private fun joinLobby() {
-        val lobbyURI = "http://padraig.red:8080/lobbies/$lobbyID/join?username=${sharedPrefs.username}"
+        // Encode username.
+        val lobbyURI = "http://padraig.red:8080/lobbies/$lobbyID/join?username=${URLEncoder.encode(sharedPrefs.username, "UTF-8")}"
         Log.d(this.tag(), "Connecting to lobby: $lobbyURI")
         socket = object : WebSocketClient(URI(lobbyURI)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
