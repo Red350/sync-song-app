@@ -24,7 +24,10 @@ import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
+import red.padraig.syncsong.network.ClientCommand
 import red.padraig.syncsong.network.Message
+import red.padraig.syncsong.network.ServerCommand
+import red.padraig.syncsong.network.getServerCommandByOrdinal
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
@@ -113,7 +116,7 @@ class LobbyActivity : BaseActivity() {
 
         if (data != null) {
             // TODO add this to a queue based on lobby mode
-            currentTrack = MyTrack(
+            val searchTrack = MyTrack(
                     data.getStringExtra("TRACK_URI"),
                     data.getStringExtra("TRACK_NAME"),
                     data.getStringExtra("TRACK_ARTIST"),
@@ -121,6 +124,8 @@ class LobbyActivity : BaseActivity() {
                     null,
                     null
             )
+
+            sendMessage(Message(null, searchTrack, ClientCommand.AddSong.ordinal, null))
         }
 
         // TODO this shouldn't be in the final app, but for now this seems like the best place to enable it.
@@ -278,23 +283,24 @@ class LobbyActivity : BaseActivity() {
 
         // Execute command if set.
         if (msg.command != null) {
+            val command = getServerCommandByOrdinal(msg.command)
             // Distinguish between commands that require the track to be set in the message.
             if (msg.track != null) {
-                when (msg.command) {
-                    "play" -> {
+                when (command) {
+                    ServerCommand.Play -> {
                         musicPlayer.play(msg.track.uri)
                         currentTrack = msg.track
                         return
                     }
-                    "seek_to" -> {
+                    ServerCommand.SeekTo -> {
                         musicPlayer.seekTo(msg.track.position)
                         return
                     }
-                    "seek_relative" -> {
+                    ServerCommand.SeekRelative -> {
                         musicPlayer.seekToRelativePosition(msg.track.position)
                         return
                     }
-                    "queue" -> {
+                    ServerCommand.Queue -> {
                         musicPlayer.queue(msg.track.uri)
                         return
                     }
@@ -302,16 +308,16 @@ class LobbyActivity : BaseActivity() {
                 }
             }
 
-            when (msg.command) {
-                "pause" -> {
+            when (command) {
+                ServerCommand.Pause -> {
                     musicPlayer.pause()
                     return
                 }
-                "resume" -> {
+                ServerCommand.Resume -> {
                     musicPlayer.resume()
                     return
                 }
-                "skip" -> {
+                ServerCommand.Skip -> {
                     musicPlayer.skipNext()
                     return
                 }
@@ -326,6 +332,12 @@ class LobbyActivity : BaseActivity() {
 
     private fun sendUserMessage(userMsg: String) {
         val msg = Message(null, null, null, userMsg.escapeSpecialCharacters())
+        sendMessage(msg)
+    }
+
+    // Adds the username to the message and sends it.
+    private fun sendMessage(msg: Message) {
+        msg.username = sharedPrefs.username
         socket?.send(marshal(msg))
     }
 }

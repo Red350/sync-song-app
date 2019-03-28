@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import red.padraig.syncsong.data.MyTrack
 
 data class Message(
-        @SerializedName("username") val username: String?,
+        @SerializedName("username") var username: String?,
         @SerializedName("currentTrack") val track: MyTrack?,
-        @SerializedName("command") val command: String?,
+        @SerializedName("command") val command: Int?,
         @SerializedName("userMsg") val userMsg: String?
 )
