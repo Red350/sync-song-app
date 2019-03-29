@@ -5,7 +5,7 @@
     <item
         android:id="@+id/lobby_menuitem_clients"
         android:icon="@drawable/ic_person_black_24dp"
-        android:title="@string/menu_search"
+        android:title="@string/menu_lobbymembers"
         app:showAsAction="ifRoom" />
 
     <item
@@ -13,5 +13,12 @@
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/menu_search"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/lobby_menuitem_exit"
+        android:icon="@drawable/ic_clear_black_24dp"
+        android:title="@string/menu_leavelobby"
+        app:showAsAction="withText" />
+
 
 </menu>

@@ -118,6 +118,32 @@ class LobbyActivity : BaseActivity() {
         musicPlayer.disconnect()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar_lobby, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.lobby_menuitem_search -> {
+            startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE)
+            true
+        }
+        R.id.lobby_menuitem_clients -> {
+            val intent = Intent(this, ClientListActivity::class.java)
+            intent.putExtra("ADMIN", admin)
+            intent.putExtra("CLIENTS", clientNames)
+            startActivityForResult(intent, CLIENT_REQUEST_CODE)
+            true
+        }
+        R.id.lobby_menuitem_exit -> {
+            musicPlayer.pause()
+            socket?.close(CloseFrame.NORMAL, "User has left the lobby")
+            finish()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -145,26 +171,6 @@ class LobbyActivity : BaseActivity() {
             else -> return
         }
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_toolbar_lobby, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.lobby_menuitem_search -> {
-            startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE)
-            true
-        }
-        R.id.lobby_menuitem_clients -> {
-            val intent = Intent(this, ClientListActivity::class.java)
-            intent.putExtra("ADMIN", admin)
-            intent.putExtra("CLIENTS", clientNames)
-            startActivityForResult(intent, CLIENT_REQUEST_CODE)
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
     }
 
     // Connect to the Sync Song server via websocket and initialise a message listener.
