@@ -90,7 +90,8 @@ class LobbyActivity : BaseActivity() {
             lobby_et_message.setText("")
         }
 
-        lobby_btn_playpause.setOnClickListener { togglePlay() }
+        // TODO could be useful in certain scenarios, but going t
+//        lobby_btn_playpause.setOnClickListener { togglePlay() }
 
         lobby_btn_voteskip.setOnClickListener { voteSkip() }
 
@@ -133,9 +134,6 @@ class LobbyActivity : BaseActivity() {
 
             sendMessage(Message(null, searchTrack, null, ClientCommand.AddSong.ordinal, null))
         }
-
-        // TODO this shouldn't be in the final app, but for now this seems like the best place to enable it.
-        lobby_btn_playpause.isEnabled = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -204,9 +202,6 @@ class LobbyActivity : BaseActivity() {
         runOnUiThread {
             rowtrack_tv_name.text = track.name
             rowtrack_tv_artist.text = track.artist
-
-            // TODO this shouldn't be in the final app, but for now this seems like the best place to enable it.
-            lobby_btn_playpause.isEnabled = true
         }
 
         // Don't think it makes a difference, but probably best not to run this on the UI thread
@@ -259,25 +254,25 @@ class LobbyActivity : BaseActivity() {
         queueOpen = !queueOpen
     }
 
-    private fun togglePlay() {
-        if (playing) {
-            socket?.send("{command: pause}")
-        } else {
-            socket?.send("{command: play}")
-        }
-    }
-
-    private fun play(uri: String) {
-        // URI example: spotify:track:5ZrrXIYTvjXPKVQMjqaumR
-        musicPlayer.play(uri)
-        playing = true
-    }
-
-    private fun pause() {
-        Log.d(this.tag(), "Pausing")
-        musicPlayer.pause()
-        playing = false
-    }
+//    private fun togglePlay() {
+//        if (playing) {
+//            socket?.send("{command: pause}")
+//        } else {
+//            socket?.send("{command: play}")
+//        }
+//    }
+//
+//    private fun play(uri: String) {
+//        // URI example: spotify:track:5ZrrXIYTvjXPKVQMjqaumR
+//        musicPlayer.play(uri)
+//        playing = true
+//    }
+//
+//    private fun pause() {
+//        Log.d(this.tag(), "Pausing")
+//        musicPlayer.pause()
+//        playing = false
+//    }
 
     // Displays the connection state, an attempts to reconnect to the server if disconnected.
     private fun setConnectionState(connected: Boolean) {
@@ -290,15 +285,16 @@ class LobbyActivity : BaseActivity() {
     private fun displayUserMessage(msg: Message) {
         runOnUiThread {
             lobby_tv_messages.append(if (msg.username == null) {
-                msg.userMsg
+                "\n" + msg.userMsg
             } else {
-                "${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}\n"
+                "\n${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}"
             })
         }
     }
 
     // Look at which fields in the message are set and response appropriately.
     private fun processMessage(msg: Message) {
+        Log.d(this.tag(), "Processing message: $msg")
         // Display user message if set.
         if (msg.userMsg != null) {
             displayUserMessage(msg)
@@ -314,20 +310,24 @@ class LobbyActivity : BaseActivity() {
             if (msg.track != null) {
                 when (command) {
                     ServerCommand.Play -> {
+                        Log.d(this.tag(), "Received Play command")
                         musicPlayer.play(msg.track.uri)
                         currentTrack = msg.track
                         return
                     }
                     ServerCommand.Skip -> {
+                        Log.d(this.tag(), "Received Skip command")
                         musicPlayer.play(msg.track.uri)
                         currentTrack = msg.track
                         return
                     }
                     ServerCommand.SeekTo -> {
+                        Log.d(this.tag(), "Received SeekTo command")
                         musicPlayer.seekTo(msg.track.position)
                         return
                     }
                     ServerCommand.SeekRelative -> {
+                        Log.d(this.tag(), "Received SeekRelative command")
                         musicPlayer.seekToRelativePosition(msg.track.position)
                         return
                     }
@@ -338,14 +338,17 @@ class LobbyActivity : BaseActivity() {
 
             when (command) {
                 ServerCommand.Pause -> {
+                    Log.d(this.tag(), "Received Pause command")
                     musicPlayer.pause()
                     return
                 }
                 ServerCommand.Resume -> {
+                    Log.d(this.tag(), "Received Resume command")
                     musicPlayer.resume()
                     return
                 }
                 ServerCommand.Queue -> {
+                    Log.d(this.tag(), "Received Queue command")
                     if (msg.trackQueue == null) return
                     updateTrackQueueUI(msg.trackQueue)
 

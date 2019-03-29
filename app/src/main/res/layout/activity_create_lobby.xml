@@ -53,12 +53,12 @@
                 android:tag="ADMIN_CONTROLLED"
                 android:text="@string/lobbymode_admincontrolled" />
 
-            <RadioButton
-                android:id="@+id/createlobby_rb_lobbymode_roundrobin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:tag="ROUND_ROBIN"
-                android:text="@string/lobbymode_roundrobin" />
+            <!--<RadioButton-->
+            <!--android:id="@+id/createlobby_rb_lobbymode_roundrobin"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:tag="ROUND_ROBIN"-->
+            <!--android:text="@string/lobbymode_roundrobin" />-->
 
             <RadioButton
                 android:id="@+id/createlobby_rb_lobbymode_freeforall"

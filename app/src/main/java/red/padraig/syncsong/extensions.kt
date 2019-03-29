@@ -16,7 +16,7 @@ fun String.unescapeSpecialCharacters(): String =
 
 // Convenience function for printing volley errors.
 fun VolleyError.printableError(): String {
-    return if (this.networkResponse.data != null) {
+    return if (this.networkResponse != null) {
         String(this.networkResponse.data)
     } else {
         this::class.simpleName.toString()
