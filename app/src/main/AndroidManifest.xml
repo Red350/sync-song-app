@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".ui.activities.StartupActivity"
             android:noHistory="true"
@@ -39,6 +40,9 @@
             android:name=".ui.activities.LobbyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".ui.activities.ClientListActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Spotify Activities -->
         <!-- TODO this should have been automatically added but wasn't, not sure if it's required -->

@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName
 import red.padraig.syncsong.data.MyTrack
 
 data class Message(
-        @SerializedName("username") var username: String?,
-        @SerializedName("currentTrack") val track: MyTrack?,
-        @SerializedName("trackQueue") val trackQueue: Array<MyTrack>?,
-        @SerializedName("command") val command: Int?,
-        @SerializedName("userMsg") val userMsg: String?
+        @SerializedName("username") var username: String? = null,
+        @SerializedName("currentTrack") val track: MyTrack? = null,
+        @SerializedName("trackQueue") val trackQueue: Array<MyTrack>? = null,
+        @SerializedName("clientNames") val clientNames: Array<String>? = null,
+        @SerializedName("admin") val admin: String? = null,
+        @SerializedName("command") val command: Int? = null,
+        @SerializedName("userMsg") val userMsg: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

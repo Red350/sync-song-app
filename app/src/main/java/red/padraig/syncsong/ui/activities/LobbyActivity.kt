@@ -38,12 +38,15 @@ class LobbyActivity : BaseActivity() {
 
     companion object {
         const val SEARCH_REQUEST_CODE = 1
+        const val CLIENT_REQUEST_CODE = 2
         // This is static to prevent a user from connecting to multiple lobbies at once.
         private var socket: WebSocketClient? = null
     }
 
     private lateinit var lobbyID: String
     private lateinit var lobbyName: String
+    private lateinit var admin: String
+    private lateinit var clientNames: Array<String>
 
     private val playerState = Channel<MyTrack>()
     private lateinit var musicPlayer: MusicPlayer
@@ -118,22 +121,30 @@ class LobbyActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode != SEARCH_REQUEST_CODE) return
+        if (data == null) return
 
-        if (data != null) {
-            // TODO add this to a queue based on lobby mode
-            val searchTrack = MyTrack(
-                    data.getStringExtra("TRACK_URI"),
-                    data.getStringExtra("TRACK_NAME"),
-                    data.getStringExtra("TRACK_ARTIST"),
-                    -1,
-                    sharedPrefs.username,
-                    null,
-                    null
-            )
+        when (requestCode) {
+            SEARCH_REQUEST_CODE -> {
+                // Send a request to the server to add this song to the queue.
+                val searchTrack = MyTrack(
+                        data.getStringExtra("TRACK_URI"),
+                        data.getStringExtra("TRACK_NAME"),
+                        data.getStringExtra("TRACK_ARTIST"),
+                        -1,
+                        sharedPrefs.username,
+                        null,
+                        null
+                )
 
-            sendMessage(Message(null, searchTrack, null, ClientCommand.AddSong.ordinal, null))
+                sendMessage(Message(track = searchTrack, command = ClientCommand.AddSong.ordinal))
+            }
+            CLIENT_REQUEST_CODE -> {
+                // Send a request to the server to promote the provided client.
+                sendMessage(Message(admin = data.getStringExtra("ADMIN"), command = ClientCommand.Promote.ordinal))
+            }
+            else -> return
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -144,6 +155,13 @@ class LobbyActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.lobby_menuitem_search -> {
             startActivityForResult(Intent(this, SearchActivity::class.java), SEARCH_REQUEST_CODE)
+            true
+        }
+        R.id.lobby_menuitem_clients -> {
+            val intent = Intent(this, ClientListActivity::class.java)
+            intent.putExtra("ADMIN", admin)
+            intent.putExtra("CLIENTS", clientNames)
+            startActivityForResult(intent, CLIENT_REQUEST_CODE)
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -300,6 +318,16 @@ class LobbyActivity : BaseActivity() {
             displayUserMessage(msg)
         }
 
+        // Update the admin if set.
+        if (msg.admin != null) {
+            admin = msg.admin
+        }
+
+        // Update the clients if set.
+        if (msg.clientNames != null) {
+            clientNames = msg.clientNames
+        }
+
         // Update the queue.
         updateTrackQueueUI(msg.trackQueue)
 
@@ -368,12 +396,12 @@ class LobbyActivity : BaseActivity() {
     private fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
 
     private fun voteSkip() {
-        sendMessage(Message(null, null, null, ClientCommand.VoteSkip.ordinal, null))
+        sendMessage(Message(command = ClientCommand.VoteSkip.ordinal))
         toastShort("Vote cast")
     }
 
     private fun sendUserMessage(userMsg: String) {
-        sendMessage(Message(null, null, null, null, userMsg.escapeSpecialCharacters()))
+        sendMessage(Message(userMsg = userMsg.escapeSpecialCharacters()))
     }
 
     // Adds the username to the message and sends it.

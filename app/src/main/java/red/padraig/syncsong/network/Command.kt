@@ -7,6 +7,7 @@ sealed class Command(val ordinal: Int)
 sealed class ClientCommand(ordinal: Int) : Command(ordinal) {
     object AddSong : ClientCommand(1)
     object VoteSkip : ClientCommand(2)
+    object Promote : ClientCommand(3)
 }
 
 sealed class ServerCommand(ordinal: Int) : Command(ordinal) {

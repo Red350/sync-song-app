@@ -21,7 +21,7 @@ import red.padraig.syncsong.tag
 class SyncSongAPI(private val context: Context, private val volleyQueue: RequestQueue) {
 
     // Send a get lobbies request, and return the response through the provided callback.
-    fun getLobbies(callback: (MutableList<Lobby>) -> Unit) {
+    fun getLobbies(errorListener: Response.ErrorListener, successCallback: (MutableList<Lobby>) -> Unit) {
         val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_lobbies)
         val lobbyList = mutableListOf<Lobby>()
 
@@ -41,7 +41,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
                                 lobby["public"].asBoolean
                         ))
                     }
-                    callback(lobbyList)
+                    successCallback(lobbyList)
                 },
                 Response.ErrorListener { error ->
                     val errorMsg = when (error) {

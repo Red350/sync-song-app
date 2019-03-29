@@ -2,11 +2,17 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import com.android.volley.Response
+import com.android.volley.TimeoutError
 import kotlinx.android.synthetic.main.activity_lobby_list.*
 import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
+import red.padraig.syncsong.printableError
+import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.adapater.LobbyAdapter
 
 class LobbyListActivity : BaseActivity() {
@@ -68,7 +74,21 @@ class LobbyListActivity : BaseActivity() {
         lobbyList.clear()
         lobbyAdapter.notifyDataSetChanged()
 
-        syncSongAPI.getLobbies {
+        val errorListener = Response.ErrorListener { error ->
+            val errorMsg = when (error) {
+                is TimeoutError -> {
+                    "Unable to connect to sync song server"
+                }
+                else -> {
+                    "Error getting lobbies: ${error.printableError()}"
+                }
+            }
+            Log.d(this.tag(), errorMsg)
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+            lobbylist_SRL_lobbies.isRefreshing = false
+        }
+
+        syncSongAPI.getLobbies(errorListener) {
             lobbyList.clear()   // No harm clearing again since this is asynchronous.
             lobbyList.addAll(it)
             lobbyAdapter.notifyDataSetChanged()
