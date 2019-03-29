@@ -288,7 +288,13 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun displayUserMessage(msg: Message) {
-        runOnUiThread { lobby_tv_messages.append("${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}\n") }
+        runOnUiThread {
+            lobby_tv_messages.append(if (msg.username == null) {
+                msg.userMsg
+            } else {
+                "${msg.username}: ${msg.userMsg?.unescapeSpecialCharacters()}\n"
+            })
+        }
     }
 
     // Look at which fields in the message are set and response appropriately.
