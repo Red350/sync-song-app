@@ -25,13 +25,15 @@ data class SSTrack(
             uri = parcel.readString(),
             name = parcel.readString(),
             artist = parcel.readString(),
-            duration = parcel.readLong())
+            duration = parcel.readLong(),
+            username = parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(uri)
         parcel.writeString(name)
         parcel.writeString(artist)
         parcel.writeLong(duration)
+        parcel.writeString(username)
     }
 
     override fun describeContents(): Int {

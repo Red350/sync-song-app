@@ -56,12 +56,15 @@ class LobbyActivity : BaseActivity() {
 
     private var optionsMenu: Menu? = null
 
+    private var spotifyConnected = false
+    private var handshakeComplete = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
 
         // Create and connect to Spotify music player.
-        musicPlayer = SpotifyPlayer(applicationContext, playerState)
+        musicPlayer = SpotifyPlayer(applicationContext, playerState, this::setSpotifyConnectionState)
         musicPlayer.connect()
         subscribeToPlayerState()
 
@@ -85,6 +88,7 @@ class LobbyActivity : BaseActivity() {
         clockHandshake = ClockHandshake(socket) {
             Log.d(this.tag(), "Handshake complete")
             runOnUiThread {
+                handshakeComplete = true
                 enableUI()
             }
         }
@@ -141,6 +145,7 @@ class LobbyActivity : BaseActivity() {
         }
         R.id.lobby_menuitem_exit -> {
             leaveLobby()
+            toastShort("Exited lobby")
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -189,6 +194,10 @@ class LobbyActivity : BaseActivity() {
                         finish()
                     }
                 } else {
+                    // Inform the user if the server dropped the connection.
+                    if (remote) {
+                        toastShort("Lost connection to lobby")
+                    }
                     setConnectionState(false)
                 }
             }
@@ -220,6 +229,7 @@ class LobbyActivity : BaseActivity() {
     private fun enableUI() {
         lobby_btn_send.isEnabled = true
         lobby_btn_voteskip.isEnabled = true
+        optionsMenu?.findItem(R.id.lobby_menuitem_exit)?.isEnabled = true
         optionsMenu?.findItem(R.id.lobby_menuitem_search)?.isEnabled = true
         optionsMenu?.findItem(R.id.lobby_menuitem_clients)?.isEnabled = true
     }
@@ -281,36 +291,26 @@ class LobbyActivity : BaseActivity() {
         queueOpen = !queueOpen
     }
 
-//    private fun togglePlay() {
-//        if (playing) {
-//            socket?.send("{command: pause}")
-//        } else {
-//            socket?.send("{command: play}")
-//        }
-//    }
-//
-//    private fun play(uri: String) {
-//        // URI example: spotify:track:5ZrrXIYTvjXPKVQMjqaumR
-//        musicPlayer.play(uri)
-//        playing = true
-//    }
-//
-//    private fun pause() {
-//        Log.d(this.tag(), "Pausing")
-//        musicPlayer.pause()
-//        playing = false
-//    }
-
     // Displays the connection state.
     private fun setConnectionState(connected: Boolean) {
         runOnUiThread {
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
 
             // Leave the lobby if the websocket connection is lost.
+            // This results in leaveLobby being called twice in the case that the user chooses to leave
+            // the lobby, but that is preferable to situations where the websocket disconnects unintentionally
+            // from the client end silently.
             if (!connected) {
-                toastLong("Lost connection to the lobby")
                 leaveLobby()
             }
+        }
+    }
+
+    private fun setSpotifyConnectionState(connected: Boolean) {
+        spotifyConnected = connected
+        if (!connected) {
+            toastLong("Lost connection to Spotify")
+            leaveLobby()
         }
     }
 
@@ -430,7 +430,9 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun leaveLobby() {
-        musicPlayer?.pause()
+        if (spotifyConnected) {
+            musicPlayer.pause()
+        }
         socket?.close(CloseFrame.NORMAL, "User has left the lobby")
         finish()
     }

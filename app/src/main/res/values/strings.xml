@@ -14,6 +14,9 @@
     <string name="api_endpoint_createlobby">/lobbies/create</string>
     <string name="spotify_url_search">https://api.spotify.com/v1/search</string>
     <string name="CLIENT_ID">8a5ddeeff2b14f95930f7c1b30d5a83b</string>
+
+    <!-- Not an ideal name for the callback, but I had issues getting auth working, so I put everything
+    to default during debugging, and now that it works I don't really want to risk changing it -->
     <string name="REDIRECT_URI">myfirstapp://callback</string>
     <string name="spotify_url_me">https://api.spotify.com/v1/me</string>
 

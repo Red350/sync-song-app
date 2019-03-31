@@ -19,6 +19,7 @@
     <item
         android:id="@+id/lobby_menuitem_exit"
         android:icon="@drawable/ic_clear_black_24dp"
+        android:enabled="false"
         android:title="@string/menu_leavelobby"
         app:showAsAction="withText" />
 

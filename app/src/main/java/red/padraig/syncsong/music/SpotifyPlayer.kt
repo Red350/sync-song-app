@@ -12,7 +12,7 @@ import red.padraig.syncsong.data.SSTrack
 import red.padraig.syncsong.tag
 
 
-class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>) : MusicPlayer {
+class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val onConnectCallback: (Boolean) -> Unit) : MusicPlayer {
 
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
@@ -35,6 +35,7 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>) : M
 
                     override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                         Log.d(this@SpotifyPlayer.tag(), "Connected to Spotify")
+                        onConnectCallback(true) // Inform the activity that we have connected to spotify.
                         this@SpotifyPlayer.spotifyAppRemote = spotifyAppRemote
                         playerApi = spotifyAppRemote.playerApi
                         imagesApi = spotifyAppRemote.imagesApi
@@ -58,6 +59,7 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>) : M
 
                     override fun onFailure(throwable: Throwable) {
                         Log.e(this@SpotifyPlayer.tag(), throwable.message, throwable)
+                        onConnectCallback(false) // Inform the activity that we have connected to spotify.
                     }
                 })
     }
