@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_lobby.*
 import kotlinx.android.synthetic.main.row_track.*
 import kotlinx.coroutines.GlobalScope
@@ -24,10 +23,7 @@ import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
-import red.padraig.syncsong.network.ClientCommand
-import red.padraig.syncsong.network.Message
-import red.padraig.syncsong.network.ServerCommand
-import red.padraig.syncsong.network.getServerCommandByOrdinal
+import red.padraig.syncsong.network.*
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.adapater.QueueAdapter
 import red.padraig.syncsong.unescapeSpecialCharacters
@@ -47,10 +43,10 @@ class LobbyActivity : BaseActivity() {
     private lateinit var lobbyName: String
     private lateinit var admin: String
     private lateinit var clientNames: Array<String>
+    private lateinit var clockHandshake: ClockHandshake
 
     private val playerState = Channel<MyTrack>()
     private lateinit var musicPlayer: MusicPlayer
-
     private var playing = false
     private lateinit var currentTrack: MyTrack
 
@@ -76,6 +72,15 @@ class LobbyActivity : BaseActivity() {
             socket?.close(CloseFrame.NORMAL, "User joining a new lobby")
 
             joinLobby()
+        }
+
+        // Initialise the handshake object.
+        clockHandshake = ClockHandshake(socket) {
+            Log.d(this.tag(), "Handshake complete")
+            // TODO: Initialise UI here
+            runOnUiThread {
+                toastLong("Handshake complete")
+            }
         }
 
         // Create and connect to Spotify music player.
@@ -202,7 +207,7 @@ class LobbyActivity : BaseActivity() {
             override fun onMessage(jsonMessage: String?) {
                 Log.d(this@LobbyActivity.tag(), "Message received: $jsonMessage")
                 // The message is converted into a Message object before parsing.
-                val message = unmarshal(jsonMessage)
+                val message = Message.unmarshal(jsonMessage)
                 processMessage(message)
             }
 
@@ -216,6 +221,8 @@ class LobbyActivity : BaseActivity() {
     private fun subscribeToPlayerState() {
         GlobalScope.launch {
             while (true) {
+                // TODO admin read when the track changes, stop the next track and send a track finished
+                // message to the server.
                 setCurrentlyPlayingUI(playerState.receive())
             }
         }
@@ -319,6 +326,13 @@ class LobbyActivity : BaseActivity() {
     // Look at which fields in the message are set and response appropriately.
     private fun processMessage(msg: Message) {
         Log.d(this.tag(), "Processing message: $msg")
+        // Process handshake message.
+        if (msg.command != null && getServerCommandByOrdinal(msg.command) == ServerCommand.Handshake) {
+            Log.d(this.tag(), "Received Handshake command")
+            clockHandshake.parseMessage(msg)
+            return
+        }
+
         // Display user message if set.
         if (msg.userMsg != null) {
             displayUserMessage(msg)
@@ -383,23 +397,14 @@ class LobbyActivity : BaseActivity() {
                 }
                 ServerCommand.Queue -> {
                     Log.d(this.tag(), "Received Queue command")
-                    if (msg.trackQueue == null) return
-                    updateTrackQueueUI(msg.trackQueue)
-
-                    // Add first track to the queue.
-                    if (!msg.trackQueue.isEmpty()) {
-                        musicPlayer.queue(msg.trackQueue[0].uri)
-                    }
+                    // Do nothing, spotify queue can't be relied on due to there being no method
+                    // to clear it in the api.
                     return
                 }
                 else -> Log.e(this.tag(), "Invalid command: ${msg.command}")
             }
         }
     }
-
-    private fun marshal(msg: Message): String = Gson().toJson(msg)
-
-    private fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
 
     private fun voteSkip() {
         sendMessage(Message(command = ClientCommand.VoteSkip.ordinal))
@@ -414,6 +419,6 @@ class LobbyActivity : BaseActivity() {
     private fun sendMessage(msg: Message) {
         msg.username = sharedPrefs.username
         Log.d(this.tag(), "Sending message: $msg")
-        socket?.send(marshal(msg))
+        socket?.send(Message.marshal(msg))
     }
 }

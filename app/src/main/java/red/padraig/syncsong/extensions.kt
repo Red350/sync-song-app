@@ -22,3 +22,13 @@ fun VolleyError.printableError(): String {
         this::class.simpleName.toString()
     }
 }
+
+// Print the ordinal value of a number e.g. 1st, 2nd etc.
+// Courtesy of https://stackoverflow.com/a/6810409/11184227
+fun Int.ordinal(): String {
+    val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
+    return when (this % 100) {
+        11, 12, 13 -> this.toString() + "th"
+        else -> this.toString() + suffixes[this % 10]
+    }
+}

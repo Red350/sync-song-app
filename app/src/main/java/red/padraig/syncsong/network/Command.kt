@@ -5,19 +5,21 @@ import kotlin.reflect.KClass
 sealed class Command(val ordinal: Int)
 
 sealed class ClientCommand(ordinal: Int) : Command(ordinal) {
-    object AddSong : ClientCommand(1)
-    object VoteSkip : ClientCommand(2)
-    object Promote : ClientCommand(3)
+    object Handshake : ClientCommand(1)
+    object AddSong : ClientCommand(2)
+    object VoteSkip : ClientCommand(3)
+    object Promote : ClientCommand(4)
 }
 
 sealed class ServerCommand(ordinal: Int) : Command(ordinal) {
-    object Play : ServerCommand(1)
-    object Pause : ServerCommand(2)
-    object Resume : ServerCommand(3)
-    object Skip : ServerCommand(4)
-    object SeekTo : ServerCommand(5)
-    object SeekRelative : ServerCommand(6)
-    object Queue : ServerCommand(7)
+    object Handshake: ServerCommand(1)
+    object Play : ServerCommand(2)
+    object Pause : ServerCommand(3)
+    object Resume : ServerCommand(4)
+    object Skip : ServerCommand(5)
+    object SeekTo : ServerCommand(6)
+    object SeekRelative : ServerCommand(7)
+    object Queue : ServerCommand(8)
 }
 
 fun getServerCommandByOrdinal(ordinal: Int): ServerCommand {

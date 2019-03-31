@@ -9,6 +9,26 @@ import kotlin.reflect.KClass
 class CommandTest {
 
     @Test
+    fun testClientCommand_HandshakeIsOne() {
+        assertEquals(1, ClientCommand.Handshake.ordinal)
+    }
+
+    @Test
+    fun testClientCommand_AddSongIsTwo() {
+        assertEquals(2, ClientCommand.AddSong.ordinal)
+    }
+
+    @Test
+    fun testClientCommand_VoteSkipIsThree() {
+        assertEquals(3, ClientCommand.VoteSkip.ordinal)
+    }
+
+    @Test
+    fun testClientCommand_PromoteIsFour() {
+        assertEquals(4, ClientCommand.Promote.ordinal)
+    }
+
+    @Test
     fun testClientCommand_OrdinalsUnique() {
         checkSealedSubclassOrdinalsUnique(ClientCommand::class)
     }

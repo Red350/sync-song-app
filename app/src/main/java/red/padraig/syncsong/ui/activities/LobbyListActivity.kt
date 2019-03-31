@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
+import com.android.volley.NoConnectionError
 import com.android.volley.Response
 import com.android.volley.TimeoutError
 import kotlinx.android.synthetic.main.activity_lobby_list.*
@@ -76,7 +76,7 @@ class LobbyListActivity : BaseActivity() {
 
         val errorListener = Response.ErrorListener { error ->
             val errorMsg = when (error) {
-                is TimeoutError -> {
+                is TimeoutError, is NoConnectionError -> {
                     "Unable to connect to sync song server"
                 }
                 else -> {
@@ -84,7 +84,7 @@ class LobbyListActivity : BaseActivity() {
                 }
             }
             Log.d(this.tag(), errorMsg)
-            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+            toastLong(errorMsg)
             lobbylist_SRL_lobbies.isRefreshing = false
         }
 

@@ -1,5 +1,6 @@
 package red.padraig.syncsong.network
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import red.padraig.syncsong.data.MyTrack
 
@@ -10,8 +11,16 @@ data class Message(
         @SerializedName("clientNames") val clientNames: Array<String>? = null,
         @SerializedName("admin") val admin: String? = null,
         @SerializedName("command") val command: Int? = null,
-        @SerializedName("userMsg") val userMsg: String? = null
+        @SerializedName("userMsg") val userMsg: String? = null,
+        @SerializedName("timestamp") val timestamp: Long = 0
 ) {
+
+    companion object {
+        fun marshal(msg: Message): String = Gson().toJson(msg)
+
+        fun unmarshal(jsonMessage: String?): Message = Gson().fromJson<Message>(jsonMessage, Message::class.java)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

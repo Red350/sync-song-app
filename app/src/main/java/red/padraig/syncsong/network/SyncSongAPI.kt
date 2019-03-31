@@ -6,7 +6,6 @@ import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
-import com.android.volley.TimeoutError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.JsonObject
@@ -43,18 +42,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
                     }
                     successCallback(lobbyList)
                 },
-                Response.ErrorListener { error ->
-                    val errorMsg = when (error) {
-                        is TimeoutError -> {
-                            "Unable to connect to sync song server"
-                        }
-                        else -> {
-                            "Error getting lobbies: ${error.printableError()}"
-                        }
-                    }
-                    Log.d(this@SyncSongAPI.tag(), errorMsg)
-                    Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show()
-                }
+                errorListener
         )
         volleyQueue.add(jsonObjectRequest)
     }

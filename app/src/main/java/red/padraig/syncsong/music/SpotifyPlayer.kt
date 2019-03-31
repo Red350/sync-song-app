@@ -12,7 +12,7 @@ import red.padraig.syncsong.data.MyTrack
 import red.padraig.syncsong.tag
 
 
-class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : MusicPlayer {
+class SpotifyPlayer(val context: Context, val playerState: Channel<MyTrack>) : MusicPlayer {
 
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
@@ -38,9 +38,10 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
                         this@SpotifyPlayer.spotifyAppRemote = spotifyAppRemote
                         playerApi = spotifyAppRemote.playerApi
                         imagesApi = spotifyAppRemote.imagesApi
+                        spotifyAppRemote.userApi
 
                         // Create a listener for track state. This sends tracks back to the instantiator
-                        // via the trackState channel.
+                        // via the playerState channel.
                         this@SpotifyPlayer.spotifyAppRemote?.playerApi?.subscribeToPlayerState()?.setEventCallback {
                             val track = it.track
                             if (track != null) {
@@ -49,7 +50,7 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
                                         Log.e(this.tag(), "Track name is null: $track, ${track.uri}")
                                     }
                                     currentTrack = MyTrack(track.uri ?: "", track.name ?: "", track.artist.name ?: "", -1, "", track.imageUri, null)
-                                    trackState.send(currentTrack)
+                                    playerState.send(currentTrack)
                                 }
                             }
                         }
@@ -102,7 +103,9 @@ class SpotifyPlayer(val context: Context, val trackState: Channel<MyTrack>) : Mu
 
     override fun queue(uri: String) {
         Log.d(this.tag(), "Adding track to queue: $uri")
-        playerApi.queue(uri)
+        // Do nothing here. There's no way to clear the spotify queue through this api. We can't
+        // rely on a user's queue being empty so queueing songs is pointless.
+        // playerApi.queue(uri)
     }
 
     // Makes an async call to the spotify remote api, and returns that image through the provided callback.
