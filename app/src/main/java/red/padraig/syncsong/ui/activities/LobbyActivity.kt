@@ -75,13 +75,15 @@ class LobbyActivity : BaseActivity() {
         initialiseActionBar(lobbyName)
 
         // Connect to the lobby if we do not hold on open connection, or if the open connection is
-        // to a different lobby.
+        // to a different lobby. Otherwise, since we are connected, enable the UI.
         if (socket == null || socket?.isClosed == true || sharedPrefs.lobbyID != lobbyID) {
             // Disconnect from the previous lobby if necessary.
             // It does not cause any issues to call close() on an already closed socket.
-            socket?.close(CloseFrame.NORMAL, "User joining a new lobby")
+            socket?.close(CloseFrame.SERVICE_RESTART, "User joining a new lobby")
 
             joinLobby()
+        } else {
+            enableUI()
         }
 
         // Initialise the handshake object.
@@ -144,7 +146,7 @@ class LobbyActivity : BaseActivity() {
             true
         }
         R.id.lobby_menuitem_exit -> {
-            leaveLobby()
+            userLeaveLobby()
             toastShort("Exited lobby")
             true
         }
@@ -187,18 +189,25 @@ class LobbyActivity : BaseActivity() {
             override fun onClose(code: Int, reason: String?, remote: Boolean) {
                 Log.e(this@LobbyActivity.tag(), "Socket connection closed by${if (remote) " host" else " client"}: $code: $reason")
                 sharedPrefs.lobbyID = ""
-                if (code == CloseFrame.REFUSE) {
-                    Log.d(this@LobbyActivity.tag(), "Lobby does not exist")
-                    this@LobbyActivity.runOnUiThread {
-                        Toast.makeText(this@LobbyActivity, "Lobby does not exist", Toast.LENGTH_SHORT).show()
-                        finish()
+
+                when (code) {
+                    CloseFrame.SERVICE_RESTART -> {
+                        Log.d(this@LobbyActivity.tag(), "Connecting to new lobby")
                     }
-                } else {
-                    // Inform the user if the server dropped the connection.
-                    if (remote) {
-                        toastShort("Lost connection to lobby")
+                    CloseFrame.REFUSE -> {
+                        Log.d(this@LobbyActivity.tag(), "Lobby does not exist")
+                        this@LobbyActivity.runOnUiThread {
+                            Toast.makeText(this@LobbyActivity, "Lobby does not exist", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     }
-                    setConnectionState(false)
+                    else -> {
+                        // Inform the user if the server dropped the connection.
+                        if (remote) {
+                            toastShort("Lost connection to lobby")
+                        }
+                        setConnectionState(false)
+                    }
                 }
             }
 
@@ -297,20 +306,20 @@ class LobbyActivity : BaseActivity() {
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
 
             // Leave the lobby if the websocket connection is lost.
-            // This results in leaveLobby being called twice in the case that the user chooses to leave
-            // the lobby, but that is preferable to situations where the websocket disconnects unintentionally
-            // from the client end silently.
             if (!connected) {
-                leaveLobby()
+                leaveDueToServerDisconnect()
             }
         }
     }
 
     private fun setSpotifyConnectionState(connected: Boolean) {
         spotifyConnected = connected
-        if (!connected) {
-            toastLong("Lost connection to Spotify")
-            leaveLobby()
+        if (connected) {
+            Log.d(this.tag(), "Connected to Spotify")
+            // TODO request lobby state
+        } else {
+            Log.d(this.tag(), "Lost connection to Spotify, reconnecting...")
+            musicPlayer.connect()
         }
     }
 
@@ -425,11 +434,20 @@ class LobbyActivity : BaseActivity() {
         } catch (e: WebsocketNotConnectedException) {
             Log.e(this.tag(), "Lost connection to lobby")
             toastLong("Lost connection to lobby")
-            leaveLobby()
+            leaveDueToServerDisconnect()
         }
     }
 
-    private fun leaveLobby() {
+    private fun leaveDueToServerDisconnect() {
+        Log.e(this.tag(), "Leaving due to server disconnect")
+        if (spotifyConnected) {
+            musicPlayer.pause()
+        }
+        finish()
+    }
+
+    private fun userLeaveLobby() {
+        Log.e(this.tag(), "Leaving due to user request")
         if (spotifyConnected) {
             musicPlayer.pause()
         }

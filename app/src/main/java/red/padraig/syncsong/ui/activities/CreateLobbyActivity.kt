@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
-import android.widget.Toast
 import com.android.volley.Response
 import kotlinx.android.synthetic.main.activity_create_lobby.*
 import red.padraig.syncsong.R
@@ -35,7 +34,7 @@ class CreateLobbyActivity : BaseActivity() {
                     sharedPrefs.username,
                     Response.Listener { id ->
                         Log.d(this.tag(), "Create lobby response: $id")
-                        Toast.makeText(this, "Created lobby with ID: $id", Toast.LENGTH_SHORT).show()
+                        toastShort("Created lobby with ID: $id")
                         val intent = Intent(this, LobbyActivity::class.java)
                         intent.putExtra("LOBBY_ID", id)
                         intent.putExtra("LOBBY_NAME", name)
