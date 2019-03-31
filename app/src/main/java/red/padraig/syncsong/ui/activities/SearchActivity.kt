@@ -57,9 +57,7 @@ class SearchActivity : BaseActivity() {
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
             // Return the selected track to the Lobby activity.
             val returnIntent = Intent()
-            returnIntent.putExtra("TRACK_URI", trackList[i].uri)
-            returnIntent.putExtra("TRACK_NAME", trackList[i].name)
-            returnIntent.putExtra("TRACK_ARTIST", trackList[i].artist)
+            returnIntent.putExtra("TRACK", trackList[i])
             setResult(Activity.RESULT_OK, returnIntent)
             hideKeyboard()  // Otherwise keyboard will remain visible on lobby screen.
             finish()
@@ -129,12 +127,13 @@ class SearchActivity : BaseActivity() {
                         val artists = track["artists"].asJsonArray.joinToString { artist ->
                             artist.asJsonObject["name"].asString
                         }
+                        val duration = track["duration_ms"].asLong
 
                         // Album art URIs are stored in an array in descending order of size, we're looking for the smallest.
                         val images = it.asJsonObject["album"].asJsonObject["images"].asJsonArray
                         // We should still add a track without album art.
                         if (images.size() == 0) {
-                            addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists))
+                            addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists, duration = duration))
                             return@forEach  // Don't send an image request.
                         }
                         // Images are stored in descending order of size, we're looking for the second largest (300x300 px).
@@ -150,7 +149,7 @@ class SearchActivity : BaseActivity() {
                                 imageUrl,
                                 Response.Listener<Bitmap> { artwork ->
                                     Log.d(this@SearchActivity.tag(), "Received artwork response: $imageUrl")
-                                    addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists, artwork = artwork))
+                                    addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists, duration = duration, artwork = artwork))
 
                                 },
                                 0,
@@ -160,7 +159,7 @@ class SearchActivity : BaseActivity() {
                                 Response.ErrorListener { error ->
                                     Log.e(this@SearchActivity.tag(), "Failed to get album art: ${error.printableError()}")
                                     // We should still display a track even if the album art doesn't load.
-                                    addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists))
+                                    addTrack(tempTrackList, SSTrack(uri = uri, name = name, artist = artists, duration = duration))
                                 }
                         ))
                     }

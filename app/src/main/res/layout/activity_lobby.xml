@@ -28,6 +28,7 @@
             android:id="@+id/lobby_btn_voteskip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:layout_below="@id/row_track"
             android:text="Vote to skip" />
 

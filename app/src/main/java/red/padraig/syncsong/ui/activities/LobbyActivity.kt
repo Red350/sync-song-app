@@ -16,6 +16,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.java_websocket.client.WebSocketClient
+import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.CloseFrame
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
@@ -77,9 +78,8 @@ class LobbyActivity : BaseActivity() {
         // Initialise the handshake object.
         clockHandshake = ClockHandshake(socket) {
             Log.d(this.tag(), "Handshake complete")
-            // TODO: Initialise UI here
             runOnUiThread {
-                toastLong("Handshake complete")
+                enableUI()
             }
         }
 
@@ -97,9 +97,6 @@ class LobbyActivity : BaseActivity() {
             sendUserMessage(lobby_et_message.text.toString())
             lobby_et_message.setText("")
         }
-
-        // TODO could be useful in certain scenarios, but going t
-//        lobby_btn_playpause.setOnClickListener { togglePlay() }
 
         lobby_btn_voteskip.setOnClickListener { voteSkip() }
 
@@ -141,9 +138,7 @@ class LobbyActivity : BaseActivity() {
             true
         }
         R.id.lobby_menuitem_exit -> {
-            musicPlayer.pause()
-            socket?.close(CloseFrame.NORMAL, "User has left the lobby")
-            finish()
+            leaveLobby()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -157,12 +152,7 @@ class LobbyActivity : BaseActivity() {
         when (requestCode) {
             SEARCH_REQUEST_CODE -> {
                 // Send a request to the server to add this song to the queue.
-                val searchTrack = SSTrack(
-                        uri = data.getStringExtra("TRACK_URI"),
-                        name = data.getStringExtra("TRACK_NAME"),
-                        artist = data.getStringExtra("TRACK_ARTIST"),
-                        username = sharedPrefs.username
-                )
+                val searchTrack = data.getParcelableExtra<SSTrack>("TRACK")
 
                 sendMessage(Message(track = searchTrack, command = ClientCommand.AddSong.ordinal))
             }
@@ -223,6 +213,11 @@ class LobbyActivity : BaseActivity() {
                 setCurrentlyPlayingUI(playerState.receive())
             }
         }
+    }
+
+    private fun enableUI() {
+        lobby_btn_send.isEnabled = true
+        lobby_btn_voteskip.isEnabled = true
     }
 
     // Display details of the song currently playing.
@@ -302,11 +297,16 @@ class LobbyActivity : BaseActivity() {
 //        playing = false
 //    }
 
-    // Displays the connection state, an attempts to reconnect to the server if disconnected.
+    // Displays the connection state.
     private fun setConnectionState(connected: Boolean) {
         runOnUiThread {
-            lobby_btn_send.isEnabled = connected
             supportActionBar?.subtitle = lobbyID + " | " + if (connected) "Connected" else "Disconnected"
+
+            // Leave the lobby if the websocket connection is lost.
+            if (!connected) {
+                toastLong("Lost connection to the lobby")
+                leaveLobby()
+            }
         }
     }
 
@@ -416,6 +416,18 @@ class LobbyActivity : BaseActivity() {
     private fun sendMessage(msg: Message) {
         msg.username = sharedPrefs.username
         Log.d(this.tag(), "Sending message: $msg")
-        socket?.send(Message.marshal(msg))
+        try {
+            socket?.send(Message.marshal(msg))
+        } catch (e: WebsocketNotConnectedException) {
+            Log.e(this.tag(), "Lost connection to lobby")
+            toastLong("Lost connection to lobby")
+            leaveLobby()
+        }
+    }
+
+    private fun leaveLobby() {
+        musicPlayer.pause()
+        socket?.close(CloseFrame.NORMAL, "User has left the lobby")
+        finish()
     }
 }
