@@ -48,16 +48,22 @@ class LobbyActivity : BaseActivity() {
 
     private val playerState = Channel<SSTrack>()
     private lateinit var musicPlayer: MusicPlayer
-    private var playing = false
     private lateinit var currentTrack: SSTrack
 
     private var queueOpen = false
     private val queueList = mutableListOf<SSTrack>()
     private lateinit var queueAdapter: QueueAdapter
 
+    private var optionsMenu: Menu? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
+
+        // Create and connect to Spotify music player.
+        musicPlayer = SpotifyPlayer(applicationContext, playerState)
+        musicPlayer.connect()
+        subscribeToPlayerState()
 
         initListeners()
 
@@ -82,11 +88,6 @@ class LobbyActivity : BaseActivity() {
                 enableUI()
             }
         }
-
-        // Create and connect to Spotify music player.
-        musicPlayer = SpotifyPlayer(applicationContext, playerState)
-        musicPlayer.connect()
-        subscribeToPlayerState()
     }
 
     private fun initListeners() {
@@ -122,6 +123,7 @@ class LobbyActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar_lobby, menu)
+        optionsMenu = menu
         return true
     }
 
@@ -218,6 +220,8 @@ class LobbyActivity : BaseActivity() {
     private fun enableUI() {
         lobby_btn_send.isEnabled = true
         lobby_btn_voteskip.isEnabled = true
+        optionsMenu?.findItem(R.id.lobby_menuitem_search)?.isEnabled = true
+        optionsMenu?.findItem(R.id.lobby_menuitem_clients)?.isEnabled = true
     }
 
     // Display details of the song currently playing.
@@ -426,7 +430,7 @@ class LobbyActivity : BaseActivity() {
     }
 
     private fun leaveLobby() {
-        musicPlayer.pause()
+        musicPlayer?.pause()
         socket?.close(CloseFrame.NORMAL, "User has left the lobby")
         finish()
     }

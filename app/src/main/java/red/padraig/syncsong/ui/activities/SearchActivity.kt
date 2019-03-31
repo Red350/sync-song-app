@@ -10,7 +10,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.AbsListView
 import android.widget.ImageView
-import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.ImageRequest
@@ -57,6 +56,7 @@ class SearchActivity : BaseActivity() {
         search_lv_tracks.setOnItemClickListener { _, _, i, _ ->
             // Return the selected track to the Lobby activity.
             val returnIntent = Intent()
+            trackList[i].username = sharedPrefs.username
             returnIntent.putExtra("TRACK", trackList[i])
             setResult(Activity.RESULT_OK, returnIntent)
             hideKeyboard()  // Otherwise keyboard will remain visible on lobby screen.
@@ -166,7 +166,7 @@ class SearchActivity : BaseActivity() {
                 },
                 Response.ErrorListener { error ->
                     Log.e(this@SearchActivity.tag(), "Spotify search request failed: ${error.printableError()}")
-                    Toast.makeText(this@SearchActivity, "Error connecting to Spotify search: $error", Toast.LENGTH_LONG).show()
+                    toastShort("Error connecting to Spotify search: $error")
                 }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
