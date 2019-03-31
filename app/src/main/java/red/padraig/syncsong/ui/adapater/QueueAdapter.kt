@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import red.padraig.syncsong.R
-import red.padraig.syncsong.data.MyTrack
+import red.padraig.syncsong.data.SSTrack
 
 // Adapter for displaying track information in a list view.
-class QueueAdapter(val context: Context, private val data: List<MyTrack>): BaseAdapter() {
+class QueueAdapter(val context: Context, private val data: List<SSTrack>): BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 

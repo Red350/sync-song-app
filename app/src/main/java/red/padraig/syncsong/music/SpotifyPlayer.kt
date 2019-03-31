@@ -8,11 +8,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import red.padraig.syncsong.R
-import red.padraig.syncsong.data.MyTrack
+import red.padraig.syncsong.data.SSTrack
 import red.padraig.syncsong.tag
 
 
-class SpotifyPlayer(val context: Context, val playerState: Channel<MyTrack>) : MusicPlayer {
+class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>) : MusicPlayer {
 
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
@@ -20,7 +20,7 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<MyTrack>) : M
     private lateinit var playerApi: PlayerApi
     private lateinit var imagesApi: ImagesApi
 
-    private lateinit var currentTrack: MyTrack
+    private lateinit var currentTrack: SSTrack
 
     private val connectionParams = ConnectionParams.Builder(context.getString(R.string.CLIENT_ID))
             .setRedirectUri(context.getString(R.string.REDIRECT_URI))
@@ -49,7 +49,7 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<MyTrack>) : M
                                     if (track.name == null) {
                                         Log.e(this.tag(), "Track name is null: $track, ${track.uri}")
                                     }
-                                    currentTrack = MyTrack(track.uri ?: "", track.name ?: "", track.artist.name ?: "", -1, "", track.imageUri, null)
+                                    currentTrack = SSTrack(uri = track.uri ?: "", name = track.name ?: "", artist = track.artist.name ?: "", imageUri = track.imageUri)
                                     playerState.send(currentTrack)
                                 }
                             }

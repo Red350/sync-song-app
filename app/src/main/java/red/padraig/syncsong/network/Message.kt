@@ -2,12 +2,12 @@ package red.padraig.syncsong.network
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import red.padraig.syncsong.data.MyTrack
+import red.padraig.syncsong.data.SSTrack
 
 data class Message(
         @SerializedName("username") var username: String? = null,
-        @SerializedName("currentTrack") val track: MyTrack? = null,
-        @SerializedName("trackQueue") val trackQueue: Array<MyTrack>? = null,
+        @SerializedName("currentTrack") val track: SSTrack? = null,
+        @SerializedName("trackQueue") val trackQueue: Array<SSTrack>? = null,
         @SerializedName("clientNames") val clientNames: Array<String>? = null,
         @SerializedName("admin") val admin: String? = null,
         @SerializedName("command") val command: Int? = null,

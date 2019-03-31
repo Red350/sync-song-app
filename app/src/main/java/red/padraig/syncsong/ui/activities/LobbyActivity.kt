@@ -19,7 +19,7 @@ import org.java_websocket.client.WebSocketClient
 import org.java_websocket.framing.CloseFrame
 import org.java_websocket.handshake.ServerHandshake
 import red.padraig.syncsong.R
-import red.padraig.syncsong.data.MyTrack
+import red.padraig.syncsong.data.SSTrack
 import red.padraig.syncsong.escapeSpecialCharacters
 import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
@@ -45,13 +45,13 @@ class LobbyActivity : BaseActivity() {
     private lateinit var clientNames: Array<String>
     private lateinit var clockHandshake: ClockHandshake
 
-    private val playerState = Channel<MyTrack>()
+    private val playerState = Channel<SSTrack>()
     private lateinit var musicPlayer: MusicPlayer
     private var playing = false
-    private lateinit var currentTrack: MyTrack
+    private lateinit var currentTrack: SSTrack
 
     private var queueOpen = false
-    private val queueList = mutableListOf<MyTrack>()
+    private val queueList = mutableListOf<SSTrack>()
     private lateinit var queueAdapter: QueueAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,14 +157,11 @@ class LobbyActivity : BaseActivity() {
         when (requestCode) {
             SEARCH_REQUEST_CODE -> {
                 // Send a request to the server to add this song to the queue.
-                val searchTrack = MyTrack(
-                        data.getStringExtra("TRACK_URI"),
-                        data.getStringExtra("TRACK_NAME"),
-                        data.getStringExtra("TRACK_ARTIST"),
-                        -1,
-                        sharedPrefs.username,
-                        null,
-                        null
+                val searchTrack = SSTrack(
+                        uri = data.getStringExtra("TRACK_URI"),
+                        name = data.getStringExtra("TRACK_NAME"),
+                        artist = data.getStringExtra("TRACK_ARTIST"),
+                        username = sharedPrefs.username
                 )
 
                 sendMessage(Message(track = searchTrack, command = ClientCommand.AddSong.ordinal))
@@ -229,7 +226,7 @@ class LobbyActivity : BaseActivity() {
     }
 
     // Display details of the song currently playing.
-    private fun setCurrentlyPlayingUI(track: MyTrack) {
+    private fun setCurrentlyPlayingUI(track: SSTrack) {
         runOnUiThread {
             rowtrack_tv_name.text = track.name
             rowtrack_tv_artist.text = track.artist
@@ -250,7 +247,7 @@ class LobbyActivity : BaseActivity() {
         }
     }
 
-    private fun updateTrackQueueUI(tracks: Array<MyTrack>?) {
+    private fun updateTrackQueueUI(tracks: Array<SSTrack>?) {
         // Since the queue is sent with every message, a null queue is considered empty.
         queueList.clear()
         if (tracks == null) return
