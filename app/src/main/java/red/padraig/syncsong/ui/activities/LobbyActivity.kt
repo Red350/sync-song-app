@@ -275,8 +275,9 @@ class LobbyActivity : BaseActivity() {
     private fun updateTrackQueueUI(tracks: Array<SSTrack>?) {
         // Since the queue is sent with every message, a null queue is considered empty.
         queueList.clear()
-        if (tracks == null) return
-        queueList.addAll(tracks)
+        if (tracks != null) {
+            queueList.addAll(tracks)
+        }
         runOnUiThread {
             queueAdapter.notifyDataSetChanged()
         }
@@ -353,6 +354,10 @@ class LobbyActivity : BaseActivity() {
         // Display user message if set.
         if (msg.userMsg != null) {
             displayUserMessage(msg)
+            if (msg.username == null) {
+                // Was just a message from the server, don't parse the rest of the contents.
+                return
+            }
         }
 
         // Update the admin if set.
@@ -375,8 +380,7 @@ class LobbyActivity : BaseActivity() {
             if (msg.track != null) {
                 when (command) {
                     ServerCommand.Play -> {
-                        Log.d(this.tag(), "Scheduling Play command")
-                        Log.d(this.tag(), "${Date(msg.timestamp)} ${Date()}")
+                        Log.d(this.tag(), "Scheduling Play command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
                         Timer("Play", false).schedule(Date(msg.timestamp)) {
                             Log.d(this.tag(), "Play command executed")
                             musicPlayer.play(msg.track.uri)
@@ -392,7 +396,6 @@ class LobbyActivity : BaseActivity() {
                     }
                     ServerCommand.SeekTo -> {
                         Log.d(this.tag(), "Scheduling SeekTo command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
-                        Log.d(this.tag(), "${Date(msg.timestamp).time} ${Date().time}")
                         Timer("SeekTo", false).schedule(Date(msg.timestamp)) {
                             Log.d(this.tag(), "SeekTo command executed")
                             musicPlayer.seekTo(msg.track.uri, msg.track.position)
