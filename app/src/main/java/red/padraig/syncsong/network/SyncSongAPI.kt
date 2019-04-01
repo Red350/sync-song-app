@@ -24,7 +24,7 @@ class SyncSongAPI(private val context: Context, private val volleyQueue: Request
         val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_lobbies)
         val lobbyList = mutableListOf<Lobby>()
 
-        Log.d(this.tag(), "Sending get lobbies request")
+        Log.d(this.tag(), "Sending get lobbies request: $url")
         val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
                 Response.Listener { response ->
                     Log.d(this.tag(), "Get lobbies response: $response")

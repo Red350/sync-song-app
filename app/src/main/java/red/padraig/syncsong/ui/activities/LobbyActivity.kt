@@ -184,7 +184,7 @@ class LobbyActivity : BaseActivity() {
     // Connect to the Sync Song server via websocket and initialise a message listener.
     private fun joinLobby() {
         // Encode username.
-        val lobbyURI = "http://padraig.red:8080/lobbies/$lobbyID/join?username=${URLEncoder.encode(sharedPrefs.username, "UTF-8")}"
+        val lobbyURI = "${getString(R.string.api_url_1)}${getString(R.string.api_port)}/lobbies/$lobbyID/join?username=${URLEncoder.encode(sharedPrefs.username, "UTF-8")}"
         Log.d(this.tag(), "Connecting to lobby: $lobbyURI")
         socket = object : WebSocketClient(URI(lobbyURI)) {
             override fun onOpen(handshakedata: ServerHandshake?) {
