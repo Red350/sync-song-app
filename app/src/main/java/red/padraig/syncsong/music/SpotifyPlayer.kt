@@ -94,20 +94,23 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
     // This means we have to play the song, then wait until spotify realises its playing before
     // we can call the seekTo function.
     override fun seekTo(uri: String, pos: Long) {
-        Log.d(this.tag(), "Seeking to $pos")
+        Log.d(this.tag(), "Playing track in preparation for seek")
         playerApi.play(uri)
+
         // Everytime we need to sleep to wait for the player state, we can increment this by the
         // sleep amount to ensure the final seek value is correct.
         var actualPos = pos
 
         var seeked = false
-
         while (!seeked) {
-            Log.d(this.tag(), "Checking player state")
             playerApi.playerState.setResultCallback {
+                Log.d(this.tag(), "Received player state: ${if (it.isPaused) "Pause" else "Playing"}")
                 if (!it.isPaused) {
-                    playerApi.seekTo(actualPos)
-                    seeked = true
+                    if (!seeked) {
+                        Log.d(this.tag(), "Seeking to $pos")
+                        playerApi.seekTo(actualPos)
+                        seeked = true
+                    }
                 }
             }
             Thread.sleep(300)
