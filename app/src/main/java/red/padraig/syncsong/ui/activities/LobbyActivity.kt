@@ -30,6 +30,8 @@ import red.padraig.syncsong.ui.adapater.QueueAdapter
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 import java.net.URLEncoder
+import java.util.*
+import kotlin.concurrent.schedule
 
 class LobbyActivity : BaseActivity() {
 
@@ -82,8 +84,6 @@ class LobbyActivity : BaseActivity() {
             socket?.close(CloseFrame.SERVICE_RESTART, "User joining a new lobby")
 
             joinLobby()
-        } else {
-            enableUI()
         }
 
         // Initialise the handshake object.
@@ -92,6 +92,7 @@ class LobbyActivity : BaseActivity() {
             runOnUiThread {
                 handshakeComplete = true
                 enableUI()
+                requestLobbyState()
             }
         }
     }
@@ -125,6 +126,12 @@ class LobbyActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         musicPlayer.disconnect()
+    }
+
+    // Minimise the app if back pressed while in a lobby.
+    // Users can still leave the lobby through the action bar.
+    override fun onBackPressed() {
+        moveTaskToBack(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -316,7 +323,7 @@ class LobbyActivity : BaseActivity() {
         spotifyConnected = connected
         if (connected) {
             Log.d(this.tag(), "Connected to Spotify")
-            // TODO request lobby state
+            requestLobbyState()
         } else {
             Log.d(this.tag(), "Lost connection to Spotify, reconnecting...")
             musicPlayer.connect()
@@ -368,9 +375,13 @@ class LobbyActivity : BaseActivity() {
             if (msg.track != null) {
                 when (command) {
                     ServerCommand.Play -> {
-                        Log.d(this.tag(), "Received Play command")
-                        musicPlayer.play(msg.track.uri)
-                        currentTrack = msg.track
+                        Log.d(this.tag(), "Scheduling Play command")
+                        Log.d(this.tag(), "${Date(msg.timestamp)} ${Date()}")
+                        Timer("Play", false).schedule(Date(msg.timestamp)) {
+                            Log.d(this.tag(), "Play command executed")
+                            musicPlayer.play(msg.track.uri)
+                            currentTrack = msg.track
+                        }
                         return
                     }
                     ServerCommand.Skip -> {
@@ -380,13 +391,18 @@ class LobbyActivity : BaseActivity() {
                         return
                     }
                     ServerCommand.SeekTo -> {
-                        Log.d(this.tag(), "Received SeekTo command")
-                        musicPlayer.seekTo(msg.track.position)
+                        Log.d(this.tag(), "Scheduling SeekTo command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
+                        Log.d(this.tag(), "${Date(msg.timestamp).time} ${Date().time}")
+                        Timer("SeekTo", false).schedule(Date(msg.timestamp)) {
+                            Log.d(this.tag(), "SeekTo command executed")
+                            musicPlayer.seekTo(msg.track.uri, msg.track.position)
+                            currentTrack = msg.track
+                        }
                         return
                     }
                     ServerCommand.SeekRelative -> {
                         Log.d(this.tag(), "Received SeekRelative command")
-                        musicPlayer.seekToRelativePosition(msg.track.position)
+                        musicPlayer.seekToRelativePosition(msg.track.uri, msg.track.position)
                         return
                     }
                     else -> Unit
@@ -416,12 +432,21 @@ class LobbyActivity : BaseActivity() {
         }
     }
 
+    private fun requestLobbyState() {
+        if (handshakeComplete && spotifyConnected) {
+            Log.d(this.tag(), "Requesting lobby state")
+            sendMessage(Message(command = ClientCommand.State.ordinal))
+        }
+    }
+
     private fun voteSkip() {
+        Log.d(this.tag(), "Voting to skip")
         sendMessage(Message(command = ClientCommand.VoteSkip.ordinal))
         toastShort("Vote cast")
     }
 
     private fun sendUserMessage(userMsg: String) {
+        Log.d(this.tag(), "Sending user message")
         sendMessage(Message(userMsg = userMsg.escapeSpecialCharacters()))
     }
 

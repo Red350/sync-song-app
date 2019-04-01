@@ -50,7 +50,9 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
                                     if (track.name == null) {
                                         Log.e(this.tag(), "Track name is null: $track, ${track.uri}")
                                     }
-                                    currentTrack = SSTrack(uri = track.uri ?: "", name = track.name ?: "", artist = track.artist.name ?: "", imageUri = track.imageUri, duration = track.duration)
+                                    currentTrack = SSTrack(uri = track.uri ?: "", name = track.name
+                                            ?: "", artist = track.artist.name
+                                            ?: "", imageUri = track.imageUri, duration = track.duration)
                                     playerState.send(currentTrack)
                                 }
                             }
@@ -88,14 +90,36 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
         playerApi.resume()
     }
 
-    override fun seekTo(pos: Long) {
+    // Spotify ignores a seek command unless a song is already playing.
+    // This means we have to play the song, then wait until spotify realises its playing before
+    // we can call the seekTo function.
+    override fun seekTo(uri: String, pos: Long) {
         Log.d(this.tag(), "Seeking to $pos")
-        playerApi.seekTo(pos)
+        playerApi.play(uri)
+        // Everytime we need to sleep to wait for the player state, we can increment this by the
+        // sleep amount to ensure the final seek value is correct.
+        var actualPos = pos
+
+        var seeked = false
+
+        while (!seeked) {
+            Log.d(this.tag(), "Checking player state")
+            playerApi.playerState.setResultCallback {
+                if (!it.isPaused) {
+                    playerApi.seekTo(actualPos)
+                    seeked = true
+                }
+            }
+            Thread.sleep(300)
+            actualPos += 300
+        }
     }
 
-    override fun seekToRelativePosition(pos: Long) {
-        Log.d(this.tag(), "Seeking forward by $pos")
-        playerApi.seekToRelativePosition(pos)
+    // TODO if we ever use this we'll have to give it the same treatment as seekTo()
+    override fun seekToRelativePosition(uri: String, pos: Long) {
+        TODO("Unimplemented")
+//        Log.d(this.tag(), "Seeking forward by $pos")
+//        playerApi.seekToRelativePosition(pos)
     }
 
     override fun skipNext() {
