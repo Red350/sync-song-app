@@ -113,8 +113,8 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
                     }
                 }
             }
-            Thread.sleep(300)
-            actualPos += 300
+            Thread.sleep(50)
+            actualPos += 50
         }
     }
 
@@ -131,7 +131,8 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
     }
 
     override fun queue(uri: String) {
-        Log.d(this.tag(), "Adding track to queue: $uri")
+        TODO("Unimplemented")
+//        Log.d(this.tag(), "Adding track to queue: $uri")
         // Do nothing here. There's no way to clear the spotify queue through this api. We can't
         // rely on a user's queue being empty so queueing songs is pointless.
         // playerApi.queue(uri)
