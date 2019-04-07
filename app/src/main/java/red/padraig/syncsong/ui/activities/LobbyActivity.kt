@@ -50,7 +50,7 @@ class LobbyActivity : BaseActivity() {
 
     private val playerState = Channel<SSTrack>()
     private lateinit var musicPlayer: MusicPlayer
-    private lateinit var currentTrack: SSTrack
+    private lateinit var mostRecentTrack: SSTrack
 
     private var queueOpen = false
     private val queueList = mutableListOf<SSTrack>()
@@ -237,7 +237,9 @@ class LobbyActivity : BaseActivity() {
             while (true) {
                 // TODO admin read when the track changes, stop the next track and send a track finished
                 // message to the server.
-                setCurrentlyPlayingUI(playerState.receive())
+                val currentTrack = playerState.receive()
+                mostRecentTrack = currentTrack
+                setCurrentlyPlayingUI(currentTrack)
             }
         }
     }
@@ -355,7 +357,7 @@ class LobbyActivity : BaseActivity() {
         if (msg.userMsg != null) {
             displayUserMessage(msg)
             if (msg.username == null) {
-                // Was just a message from the server, don't parse the rest of the contents.
+                // Was just a message from the server, don't parse the rest of the contents as it doesn't contain state.
                 return
             }
         }
@@ -373,8 +375,15 @@ class LobbyActivity : BaseActivity() {
         // Update the queue.
         updateTrackQueueUI(msg.trackQueue)
 
-        // Execute command if set.
-        if (msg.command != null) {
+        // If no command set, ensure song state matches server.
+        if (msg.command == null) {
+            Log.d(this.tag(), "Received no command, checking song state")
+            if (msg.track == null) {
+                musicPlayer.pause()
+            } else if (msg.track.uri != mostRecentTrack.uri) {
+                seekTo(msg.track, msg.timestamp)
+            }
+        } else {
             val command = getServerCommandByOrdinal(msg.command)
             // Distinguish between commands that require the track to be set in the message.
             if (msg.track != null) {
@@ -382,27 +391,19 @@ class LobbyActivity : BaseActivity() {
                     ServerCommand.Play -> {
                         Log.d(this.tag(), "Scheduling Play command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
                         Timer("Play", false).schedule(Date(msg.timestamp)) {
-                            Log.d(this.tag(), "Play command executed")
+                            Log.d(this@LobbyActivity.tag(), "Play command executed")
                             musicPlayer.play(msg.track.uri)
-                            currentTrack = msg.track
                         }
                         return
                     }
                     ServerCommand.Skip -> {
                         Log.d(this.tag(), "Received Skip command")
                         musicPlayer.play(msg.track.uri)
-                        currentTrack = msg.track
                         return
                     }
                     ServerCommand.SeekTo -> {
-                        Log.d(this.tag(), "Playing track in preparation for seek")
-                        musicPlayer.play(msg.track.uri)
-                        Log.d(this.tag(), "Scheduling SeekTo command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
-                        Timer("SeekTo", false).schedule(Date(msg.timestamp)) {
-                            Log.d(this.tag(), "SeekTo command executed")
-                            musicPlayer.seekTo(msg.track.uri, msg.track.position)
-                            currentTrack = msg.track
-                        }
+                        Log.d(this.tag(), "Received SeekTo command")
+                        seekTo(msg.track, msg.timestamp)
                         return
                     }
                     ServerCommand.SeekRelative -> {
@@ -418,7 +419,6 @@ class LobbyActivity : BaseActivity() {
             when (command) {
                 ServerCommand.Pause -> {
                     Log.d(this.tag(), "Received Pause command")
-                    musicPlayer.pause()
                     return
                 }
                 ServerCommand.Resume -> {
@@ -434,6 +434,16 @@ class LobbyActivity : BaseActivity() {
                 }
                 else -> Log.e(this.tag(), "Invalid command: ${msg.command}")
             }
+        }
+    }
+
+    private fun seekTo(track: SSTrack, timestamp: Long) {
+        Log.d(this.tag(), "Playing track in preparation for seek")
+        musicPlayer.play(track.uri)
+        Log.d(this.tag(), "Scheduling SeekTo command for $timestamp: duration: ${track.duration}, position: ${track.position}")
+        Timer("SeekTo", false).schedule(Date(timestamp)) {
+            Log.d(this@LobbyActivity.tag(), "SeekTo command executed")
+            musicPlayer.seekTo(track.uri, track.position)
         }
     }
 

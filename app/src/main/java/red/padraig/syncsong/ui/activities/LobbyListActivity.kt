@@ -117,7 +117,7 @@ class LobbyListActivity : BaseActivity() {
         val input = EditText(this)
         val builder = getDialogBuilder(input)
 
-        builder.setPositiveButton("Join") { di, _ ->
+        builder.setPositiveButton("Join") { _, _ ->
             syncSongAPI.getLobby(
                     input.text.toString(),
                     Response.ErrorListener {
