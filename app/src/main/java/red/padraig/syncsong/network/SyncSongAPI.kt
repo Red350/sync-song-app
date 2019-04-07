@@ -19,6 +19,30 @@ import red.padraig.syncsong.tag
 // Contains methods to call Sync Song server API endpoints.
 class SyncSongAPI(private val context: Context, private val volleyQueue: RequestQueue) {
 
+    // Send a getLobby request, and return the response through the provided callback.
+    fun getLobby(id: String, errorListener: Response.ErrorListener, successCallback: (Lobby) -> Unit) {
+        val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_lobbies) + "/$id"
+
+        Log.d(this.tag(), "Sending getLobby request: $url")
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null,
+                Response.Listener { response ->
+                    Log.d(this.tag(), "GetLobby response: $response")
+                    val parser = JsonParser()
+                    val lobbyJson = parser.parse(response.toString()) as JsonObject
+                    val lobby = Lobby(
+                            lobbyJson["id"].asString,
+                            lobbyJson["name"].asString,
+                            lobbyJson["genre"].asString,
+                            lobbyJson["numMembers"].asInt,
+                            lobbyJson["public"].asBoolean
+                    )
+                    successCallback(lobby)
+                },
+                errorListener
+        )
+        volleyQueue.add(jsonObjectRequest)
+    }
+
     // Send a get lobbies request, and return the response through the provided callback.
     fun getLobbies(errorListener: Response.ErrorListener, successCallback: (MutableList<Lobby>) -> Unit) {
         val url = context.getString(R.string.api_url_1) + context.getString(R.string.api_port) + context.getString(R.string.api_endpoint_lobbies)

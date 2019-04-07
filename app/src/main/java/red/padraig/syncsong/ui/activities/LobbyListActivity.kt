@@ -2,9 +2,12 @@ package red.padraig.syncsong.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import android.text.InputType
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
 import com.android.volley.NoConnectionError
 import com.android.volley.Response
 import com.android.volley.TimeoutError
@@ -14,6 +17,7 @@ import red.padraig.syncsong.data.Lobby
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
 import red.padraig.syncsong.ui.adapater.LobbyAdapter
+
 
 class LobbyListActivity : BaseActivity() {
 
@@ -58,9 +62,13 @@ class LobbyListActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.lobbylist_menuitem_refresh -> {
             this.getLobbies()
+            true
+        }
+        R.id.lobbylist_menuitem_joinbyid -> {
+            displayJoinDialog()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -96,6 +104,32 @@ class LobbyListActivity : BaseActivity() {
             // Hide the refreshing icon.
             lobbylist_SRL_lobbies.isRefreshing = false
         }
+    }
+
+    private fun displayJoinDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter Lobby ID")
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+        builder.setView(input)
+
+        builder.setPositiveButton("Join") { _, _ ->
+            syncSongAPI.getLobby(
+                    input.text.toString(),
+                    Response.ErrorListener {
+                        if (it.networkResponse.statusCode == 404) {
+                            toastShort("Lobby does not exist")
+                        } else {
+                            toastShort("Error connecting to lobby: ${it.printableError()}")
+                        }
+                    }
+            ) { lobby ->
+                joinLobby(lobby.id, lobby.name)
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.show()
     }
 
     private fun joinLobby(id: String, title: String) {

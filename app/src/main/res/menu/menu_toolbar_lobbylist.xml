@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/lobbylist_menuitem_joinbyid"
+        android:title="@string/menu_joinbyid"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/lobbylist_menuitem_refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="@string/menu_refresh"

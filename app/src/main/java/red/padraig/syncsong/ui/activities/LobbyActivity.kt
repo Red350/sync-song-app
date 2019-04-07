@@ -461,7 +461,7 @@ class LobbyActivity : BaseActivity() {
             socket?.send(Message.marshal(msg))
         } catch (e: WebsocketNotConnectedException) {
             Log.e(this.tag(), "Lost connection to lobby")
-            toastLong("Lost connection to lobby")
+            toastShort("Lost connection to lobby")
             leaveDueToServerDisconnect()
         }
     }

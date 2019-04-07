@@ -41,5 +41,6 @@
     <string name="lobbymode_freeforall">Free-for-all</string>
     <string name="menu_lobbymembers">Lobby Members</string>
     <string name="menu_leavelobby">Leave Lobby</string>
+    <string name="menu_joinbyid">Join by id</string>
 
 </resources>
