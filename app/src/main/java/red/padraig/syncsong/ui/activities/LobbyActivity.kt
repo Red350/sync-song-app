@@ -157,6 +157,10 @@ class LobbyActivity : BaseActivity() {
             toastShort("Exited lobby")
             true
         }
+        R.id.lobby_menuitem_resync -> {
+            requestLobbyState()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -250,6 +254,7 @@ class LobbyActivity : BaseActivity() {
         optionsMenu?.findItem(R.id.lobby_menuitem_exit)?.isEnabled = true
         optionsMenu?.findItem(R.id.lobby_menuitem_search)?.isEnabled = true
         optionsMenu?.findItem(R.id.lobby_menuitem_clients)?.isEnabled = true
+        optionsMenu?.findItem(R.id.lobby_menuitem_resync)?.isEnabled = true
     }
 
     // Display details of the song currently playing.

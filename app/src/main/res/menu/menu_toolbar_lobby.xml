@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/lobby_menuitem_resync"
+        android:enabled="false"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:title="@string/menu_lobbymembers"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/lobby_menuitem_clients"
         android:enabled="false"
         android:icon="@drawable/ic_person_black_24dp"
