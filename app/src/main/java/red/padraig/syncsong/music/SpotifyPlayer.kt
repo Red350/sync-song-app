@@ -90,14 +90,12 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
         playerApi.resume()
     }
 
-    // Spotify ignores a seek command unless a song is already playing.
-    // This means we have to play the song, then wait until spotify realises its playing before
-    // we can call the seekTo function.
+    // Spotify ignores a seek command unless a song is already playing, so this should only be called
+    // after calling play. The reason we don't call play here is because this is usually called
+    // after a delay, and playing also takes time to propagate. So by calling play before the delayed
+    // call to this we can have a more reliable synchronisation.
     override fun seekTo(uri: String, pos: Long) {
-        Log.d(this.tag(), "Playing track in preparation for seek")
-        playerApi.play(uri)
-
-        // Everytime we need to sleep to wait for the player state, we can increment this by the
+        // Every time we need to sleep to wait for the player state, we can increment this by the
         // sleep amount to ensure the final seek value is correct.
         var actualPos = pos
 

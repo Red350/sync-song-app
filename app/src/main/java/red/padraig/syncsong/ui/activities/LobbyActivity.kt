@@ -395,6 +395,8 @@ class LobbyActivity : BaseActivity() {
                         return
                     }
                     ServerCommand.SeekTo -> {
+                        Log.d(this.tag(), "Playing track in preparation for seek")
+                        musicPlayer.play(msg.track.uri)
                         Log.d(this.tag(), "Scheduling SeekTo command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
                         Timer("SeekTo", false).schedule(Date(msg.timestamp)) {
                             Log.d(this.tag(), "SeekTo command executed")
