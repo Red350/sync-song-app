@@ -7,16 +7,6 @@
 
     <include layout="@layout/common_toolbar" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/createlobby_tv_title"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="100dp"-->
-    <!--android:layout_marginBottom="50dp"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Create a new lobby"-->
-    <!--android:textSize="30sp" />-->
-
     <LinearLayout
         android:id="@+id/createlobby_ll_form"
         android:layout_width="match_parent"
@@ -46,26 +36,19 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/createlobby_rb_lobbymode_admin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:tag="ADMIN_CONTROLLED"
-                android:text="@string/lobbymode_admincontrolled" />
-
-            <!--<RadioButton-->
-            <!--android:id="@+id/createlobby_rb_lobbymode_roundrobin"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:tag="ROUND_ROBIN"-->
-            <!--android:text="@string/lobbymode_roundrobin" />-->
-
-            <RadioButton
                 android:id="@+id/createlobby_rb_lobbymode_freeforall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:tag="FREE_FOR_ALL"
                 android:text="@string/lobbymode_freeforall" />
+
+            <RadioButton
+                android:id="@+id/createlobby_rb_lobbymode_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="ADMIN_CONTROLLED"
+                android:text="@string/lobbymode_admincontrolled" />
 
         </RadioGroup>
 
