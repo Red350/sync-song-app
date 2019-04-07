@@ -42,7 +42,13 @@ class LobbyListActivity : BaseActivity() {
         lobbylist_lv_lobbies.adapter = lobbyAdapter
         // Join lobby on click row.
         lobbylist_lv_lobbies.setOnItemClickListener { _, _, i, _ ->
-            joinLobby(lobbyList[i].id, lobbyList[i].name)
+            if (lobbyList[i].public) {
+                joinLobby(lobbyList[i].id, lobbyList[i].name)
+                return@setOnItemClickListener
+            }
+
+            // Private lobby, prompt for lobby ID.
+            displayJoinPrivateDialog(lobbyList[i].id, lobbyList[i].name)
         }
 
         // Initialise swipe to refresh.
@@ -68,7 +74,7 @@ class LobbyListActivity : BaseActivity() {
             true
         }
         R.id.lobbylist_menuitem_joinbyid -> {
-            displayJoinDialog()
+            displayJoinByIDDialog()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -106,15 +112,12 @@ class LobbyListActivity : BaseActivity() {
         }
     }
 
-    private fun displayJoinDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Enter Lobby ID")
-
+    // Displays a dialog that allows a user to join a lobby by ID.
+    private fun displayJoinByIDDialog() {
         val input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-        builder.setView(input)
+        val builder = getDialogBuilder(input)
 
-        builder.setPositiveButton("Join") { _, _ ->
+        builder.setPositiveButton("Join") { di, _ ->
             syncSongAPI.getLobby(
                     input.text.toString(),
                     Response.ErrorListener {
@@ -128,9 +131,36 @@ class LobbyListActivity : BaseActivity() {
                 joinLobby(lobby.id, lobby.name)
             }
         }
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
         builder.show()
     }
+
+    // Displays a dialog that compares the inputted ID against the lobbies ID, allowing the user
+    // to join if they are the same.
+    private fun displayJoinPrivateDialog(id: String, name: String) {
+        val input = EditText(this)
+        val builder = getDialogBuilder(input)
+
+        builder.setPositiveButton("Join") { _, _ ->
+            if (input.text.toString() == id) {
+                joinLobby(id, name)
+            } else {
+                toastLong("Failed to join: Incorrect ID")
+            }
+        }
+        builder.show()
+    }
+
+    private fun getDialogBuilder(input: EditText): AlertDialog.Builder {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter Lobby ID")
+
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+        builder.setView(input)
+
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        return builder
+    }
+
 
     private fun joinLobby(id: String, title: String) {
         val intent = Intent(this, LobbyActivity::class.java)
