@@ -358,13 +358,10 @@ class LobbyActivity : BaseActivity() {
             return
         }
 
-        // Display user message if set.
+        // If userMsg contains something, then the rest of the message does not carry state so we return.
         if (msg.userMsg != null) {
             displayUserMessage(msg)
-            if (msg.username == null) {
-                // Was just a message from the server, don't parse the rest of the contents as it doesn't contain state.
-                return
-            }
+            return
         }
 
         // Update the admin if set.
