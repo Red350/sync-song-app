@@ -3,7 +3,6 @@ package red.padraig.syncsong.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -22,7 +21,6 @@ class StartupActivity : BaseActivity() {
     companion object {
         const val REQUEST_CODE = 1337
     }
-    private var token: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +33,27 @@ class StartupActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // Process response from Spotify Auth, and request user details.
         if (requestCode == REQUEST_CODE) {
             val response = AuthenticationClient.getResponse(resultCode, data)
 
             when (response.type) {
                 AuthenticationResponse.Type.TOKEN -> {
-                    token = response.accessToken
-                    sharedPrefs.token = token
+                    sharedPrefs.token = response.accessToken
                     requestUserDetails()
-
                 }
-                AuthenticationResponse.Type.ERROR -> Log.e(this.tag(), "Error authenticating: ${response.error}")
+                AuthenticationResponse.Type.ERROR -> {
+                    Log.e(this.tag(), "Error authenticating: ${response.error}")
+                }
                 else -> Log.d(this.tag(), "Unexpected response: ${response.type}")
             }
         }
     }
 
-    // Gets an access token for the user, and on success requests user's details.
+    // Requests a Spotify access token for the current user.
     private fun login() {
-        val builder = AuthenticationRequest.Builder(getString(R.string.CLIENT_ID),
+        val builder = AuthenticationRequest.Builder(
+                getString(R.string.CLIENT_ID),
                 AuthenticationResponse.Type.TOKEN,
                 getString(R.string.REDIRECT_URI))
         builder.setScopes(arrayOf("user-read-private"))
@@ -63,7 +63,9 @@ class StartupActivity : BaseActivity() {
 
     // Request a user's details and on success start the lobby list activity.
     private fun requestUserDetails() {
-        val userDetailsRequest = object : JsonObjectRequest(Request.Method.GET, getString(R.string.spotify_url_me), null,
+        val userDetailsRequest = object : JsonObjectRequest(
+                Request.Method.GET, getString(R.string.spotify_url_me),
+                null,
                 Response.Listener { response ->
                     Log.d(this.tag(), "User details response: $response")
                     val details = JsonParser().parse(response.toString()) as JsonObject
@@ -73,7 +75,7 @@ class StartupActivity : BaseActivity() {
                 },
                 Response.ErrorListener { error ->
                     Log.e(this.tag(), "Error getting user details: ${error.printableError()}")
-                    Toast.makeText(this, "Unable to get user details: ${error.printableError()}", Toast.LENGTH_LONG).show()
+                    toastLong("Unable to get user details: ${error.printableError()}")
                 }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()

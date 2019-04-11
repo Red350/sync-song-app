@@ -34,6 +34,7 @@ fun getClientCommandByOrdinal(ordinal: Int): ClientCommand {
 // Use reflection to get a command for a specific ordinal.
 // Ideally this would be a static method in Command, but I can't find a way to use reflection to
 // access the outer class from within a companion object.
+
 @Throws(ClassNotFoundException::class)
 fun getCommandByOrdinal(command: KClass<out Command>, ordinal: Int): Command {
     for (clazz in command.sealedSubclasses) {

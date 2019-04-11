@@ -94,7 +94,8 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
     // after calling play. The reason we don't call play here is because this is usually called
     // after a delay, and playing also takes time to propagate. So by calling play before the delayed
     // call to this we can have a more reliable synchronisation.
-    override fun seekTo(uri: String, pos: Long) {
+
+    override fun seekTo(pos: Long) {
         // Every time we need to sleep to wait for the player state, we can increment this by the
         // sleep amount to ensure the final seek value is correct.
         var actualPos = pos
@@ -117,7 +118,7 @@ class SpotifyPlayer(val context: Context, val playerState: Channel<SSTrack>, val
     }
 
     // TODO if we ever use this we'll have to give it the same treatment as seekTo()
-    override fun seekToRelativePosition(uri: String, pos: Long) {
+    override fun seekToRelativePosition(pos: Long) {
         TODO("Unimplemented")
 //        Log.d(this.tag(), "Seeking forward by $pos")
 //        playerApi.seekToRelativePosition(pos)

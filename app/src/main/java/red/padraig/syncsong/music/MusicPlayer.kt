@@ -14,9 +14,9 @@ interface MusicPlayer {
 
     fun resume()
 
-    fun seekTo(uri: String, pos: Long)
+    fun seekTo(pos: Long)
 
-    fun seekToRelativePosition(uri: String, pos: Long)
+    fun seekToRelativePosition(pos: Long)
 
     fun skipNext()
 

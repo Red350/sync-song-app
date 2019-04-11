@@ -394,7 +394,8 @@ class LobbyActivity : BaseActivity() {
             if (msg.track != null) {
                 when (command) {
                     ServerCommand.Play -> {
-                        Log.d(this.tag(), "Scheduling Play command for ${msg.timestamp}: duration: ${msg.track.duration}, position: ${msg.track.position}")
+                        Log.d(this.tag(), "Scheduling Play command for ${msg.timestamp}: " +
+                                "duration: ${msg.track.duration}, position: ${msg.track.position}")
                         Timer("Play", false).schedule(Date(msg.timestamp)) {
                             Log.d(this@LobbyActivity.tag(), "Play command executed")
                             musicPlayer.play(msg.track.uri)
@@ -413,7 +414,7 @@ class LobbyActivity : BaseActivity() {
                     }
                     ServerCommand.SeekRelative -> {
                         Log.d(this.tag(), "Received SeekRelative command")
-                        musicPlayer.seekToRelativePosition(msg.track.uri, msg.track.position)
+                        musicPlayer.seekToRelativePosition(msg.track.position)
                         return
                     }
                     else -> Unit
@@ -448,7 +449,7 @@ class LobbyActivity : BaseActivity() {
         Log.d(this.tag(), "Scheduling SeekTo command for $timestamp: duration: ${track.duration}, position: ${track.position}")
         Timer("SeekTo", false).schedule(Date(timestamp)) {
             Log.d(this@LobbyActivity.tag(), "SeekTo command executed")
-            musicPlayer.seekTo(track.uri, track.position)
+            musicPlayer.seekTo(track.position)
         }
     }
 
