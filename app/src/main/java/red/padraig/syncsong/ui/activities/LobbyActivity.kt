@@ -26,7 +26,7 @@ import red.padraig.syncsong.music.MusicPlayer
 import red.padraig.syncsong.music.SpotifyPlayer
 import red.padraig.syncsong.network.*
 import red.padraig.syncsong.tag
-import red.padraig.syncsong.ui.adapater.QueueAdapter
+import red.padraig.syncsong.ui.adapter.QueueAdapter
 import red.padraig.syncsong.unescapeSpecialCharacters
 import java.net.URI
 import java.net.URLEncoder

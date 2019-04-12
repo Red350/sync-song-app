@@ -1,4 +1,4 @@
-package red.padraig.syncsong.ui.adapater
+package red.padraig.syncsong.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

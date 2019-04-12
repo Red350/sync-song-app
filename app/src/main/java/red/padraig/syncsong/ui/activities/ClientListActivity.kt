@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_client_list.*
 import red.padraig.syncsong.R
-import red.padraig.syncsong.ui.adapater.ClientAdapter
+import red.padraig.syncsong.ui.adapter.ClientAdapter
 
 class ClientListActivity : BaseActivity() {
 

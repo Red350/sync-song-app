@@ -16,7 +16,7 @@ import red.padraig.syncsong.R
 import red.padraig.syncsong.data.Lobby
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
-import red.padraig.syncsong.ui.adapater.LobbyAdapter
+import red.padraig.syncsong.ui.adapter.LobbyAdapter
 
 
 class LobbyListActivity : BaseActivity() {

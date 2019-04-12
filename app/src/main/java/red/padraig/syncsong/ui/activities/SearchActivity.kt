@@ -20,7 +20,7 @@ import red.padraig.syncsong.R
 import red.padraig.syncsong.data.SSTrack
 import red.padraig.syncsong.printableError
 import red.padraig.syncsong.tag
-import red.padraig.syncsong.ui.adapater.TrackAdapter
+import red.padraig.syncsong.ui.adapter.TrackAdapter
 import java.util.*
 import kotlin.collections.HashMap
 
