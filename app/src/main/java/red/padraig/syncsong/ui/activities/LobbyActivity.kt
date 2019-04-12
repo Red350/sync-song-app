@@ -239,8 +239,6 @@ class LobbyActivity : BaseActivity() {
     private fun subscribeToPlayerState() {
         GlobalScope.launch {
             while (true) {
-                // TODO admin read when the track changes, stop the next track and send a track finished
-                // message to the server.
                 val currentTrack = playerState.receive()
                 mostRecentTrack = currentTrack
                 setCurrentlyPlayingUI(currentTrack)
