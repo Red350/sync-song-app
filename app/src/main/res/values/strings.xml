@@ -6,9 +6,10 @@
     <string name="com_spotify_sdk_redirect_scheme">red.padraig.syncsong</string>
     <string name="com_spotify_sdk_redirect_host">callback</string>
 
-    <string name="api_url">http://padraig.red:8080/</string>
-    <!--<string name="api_url_1">http://35.246.70.218</string>-->
-    <string name="api_url_1">http://padraig.red</string>
+    <string-array name="api_urls">
+        <item >http://padraig.red</item>
+        <item >http://35.246.70.218</item>
+    </string-array>
     <string name="api_port">:8080</string>
 
     <string name="api_endpoint_lobbies">/lobbies</string>

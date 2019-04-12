@@ -22,12 +22,17 @@ class StartupActivity : BaseActivity() {
         const val REQUEST_CODE = 1337
     }
 
+    private var spotifyAuthComplete = false
+    private var urlSearchComplete = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_startup)
 
-        // TODO change this to Authorization flow.
-        login()
+        // Find the current active Sync Song server.
+        checkSyncSongURLs()
+
+        authWithSpotify()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -50,8 +55,19 @@ class StartupActivity : BaseActivity() {
         }
     }
 
+    // Check a list of URLs to find out which server is active.
+    private fun checkSyncSongURLs() {
+        syncSongAPI.setURL { succeeded ->
+            urlSearchComplete = true
+            if (!succeeded) {
+                toastLong("Sync Song server not running")
+            }
+            openLobbyList()
+        }
+    }
+
     // Requests a Spotify access token for the current user.
-    private fun login() {
+    private fun authWithSpotify() {
         val builder = AuthenticationRequest.Builder(
                 getString(R.string.CLIENT_ID),
                 AuthenticationResponse.Type.TOKEN,
@@ -71,7 +87,8 @@ class StartupActivity : BaseActivity() {
                     val details = JsonParser().parse(response.toString()) as JsonObject
                     sharedPrefs.id = details["id"].asString
                     sharedPrefs.username = details["display_name"].asString
-                    startActivity(Intent(this, LobbyListActivity::class.java))
+                    spotifyAuthComplete = true
+                    openLobbyList()
                 },
                 Response.ErrorListener { error ->
                     Log.e(this.tag(), "Error getting user details: ${error.printableError()}")
@@ -86,5 +103,12 @@ class StartupActivity : BaseActivity() {
 
         Log.d(this.tag(), "Sending user details request")
         volleyQueue.add(userDetailsRequest)
+    }
+
+    private fun openLobbyList() {
+        // Only open the lobby list once url searching and spotify auth have completed.
+        if (spotifyAuthComplete && urlSearchComplete) {
+            startActivity(Intent(this, LobbyListActivity::class.java))
+        }
     }
 }

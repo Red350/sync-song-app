@@ -13,6 +13,7 @@ class SharedPrefsWrapper(context: Context) {
         const val ID_KEY = "id"
         const val NAME_KEY = "name"
         const val LOBBYID_KEY = "lobbyID"
+        const val SYNC_SONG_URL_KEY = "syncSongURL"
     }
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(SHARED_PREFS_TAG, Context.MODE_PRIVATE)
@@ -34,4 +35,8 @@ class SharedPrefsWrapper(context: Context) {
     var lobbyID: String
         get() = sharedPreferences.getString(LOBBYID_KEY, "")
         set(value) = sharedPreferences.edit().putString(LOBBYID_KEY, value).apply()
+
+    var syncSongURL: String
+        get() = sharedPreferences.getString(SYNC_SONG_URL_KEY, "")
+        set(value) = sharedPreferences.edit().putString(SYNC_SONG_URL_KEY, value).apply()
 }

@@ -91,7 +91,7 @@ class LobbyListActivity : BaseActivity() {
         val errorListener = Response.ErrorListener { error ->
             val errorMsg = when (error) {
                 is TimeoutError, is NoConnectionError -> {
-                    "Unable to connect to sync song server"
+                    "Unable to connect to Sync Song server"
                 }
                 else -> {
                     "Error getting lobbies: ${error.printableError()}"

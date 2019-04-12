@@ -19,7 +19,7 @@ class SyncSongApplication : Application() {
         super.onCreate()
         sharedPrefsWrapper = SharedPrefsWrapper(applicationContext)
         volleyQueue = Volley.newRequestQueue(applicationContext)
-        syncSongAPI = SyncSongAPI(applicationContext, volleyQueue)
+        syncSongAPI = SyncSongAPI(applicationContext, volleyQueue, sharedPrefsWrapper)
 
         // Initialise custom font loader.
         ViewPump.init(ViewPump.builder()

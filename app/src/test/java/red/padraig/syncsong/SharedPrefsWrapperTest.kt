@@ -86,4 +86,18 @@ class SharedPrefsWrapperTest {
         Mockito.verify(mockSharedPrefsEditor).putString(SharedPrefsWrapper.LOBBYID_KEY, "ABCD")
         Mockito.verify(mockSharedPrefsEditor).apply()
     }
+
+    @Test
+    fun getSyncSongURL() {
+        Mockito.`when`(mockSharedPrefs.getString(SharedPrefsWrapper.SYNC_SONG_URL_KEY, "")).thenReturn("http://url.com")
+        val syncSongURL = sharedPrefsWrapper.syncSongURL
+        Assert.assertEquals("http://url.com", syncSongURL)
+    }
+
+    @Test
+    fun setSyncSongURL() {
+        sharedPrefsWrapper.syncSongURL = "http://url.com"
+        Mockito.verify(mockSharedPrefsEditor).putString(SharedPrefsWrapper.SYNC_SONG_URL_KEY, "http://url.com")
+        Mockito.verify(mockSharedPrefsEditor).apply()
+    }
 }
